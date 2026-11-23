@@ -38,14 +38,17 @@ h1 small{display:block;font-size:13px;font-weight:500;opacity:.75}
 #toast.hide{opacity:0}
 footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
 #tray{display:grid;gap:6px;justify-content:center;margin-bottom:10px;touch-action:none}
-.card{font:inherit;color:var(--ink);background:var(--card);border:3px solid transparent;border-radius:16px;padding:6px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:0 4px 0 var(--line);cursor:grab;position:relative;touch-action:none}
+.card{font:inherit;color:var(--ink);background:var(--card);border:3px solid transparent;border-radius:16px;padding:6px 0 0;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:0 4px 0 var(--line);cursor:grab;position:relative;touch-action:none}
 .card[aria-pressed=true]{border-color:var(--sel)}
 .card:disabled{opacity:.35;cursor:default}
-.card canvas{width:40px;height:40px}
+.card canvas{width:52px;height:58px}
 .card b{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.card .pips{display:flex;gap:2px}.card .pips i{width:8px;height:8px;border-radius:2px}
+.card .soil{align-self:stretch;margin-top:3px;display:flex;justify-content:center;gap:3px;padding:6px 5px 7px;border-radius:0 0 12px 12px}.card .soil i{flex:0 1 13px;aspect-ratio:1;border-radius:3px;background:rgba(255,250,235,.6);box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
 .card .n{position:absolute;top:-8px;right:-5px;background:var(--ink);color:var(--card);font-size:12px;font-weight:600;border-radius:10px;padding:0 6px;line-height:19px}
 .card.nudge{animation:nudge .45s 2}
+.card.gulp{animation:gulp .35s}
+@keyframes gulp{40%{transform:scale(1.12)}}
+.flyseed{position:fixed;left:0;top:0;width:30px;height:30px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25));pointer-events:none;z-index:40}
 @keyframes nudge{30%{transform:translateY(-7px)}70%{transform:translateY(2px)}}
 #flow{width:100%;min-height:52px;font-size:19px;background:var(--water);color:#fff;box-shadow:0 4px 0 #2a7fae;display:flex;align-items:center;justify-content:center;gap:8px}
 #flow svg{width:22px;height:22px}
@@ -65,10 +68,14 @@ footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
 #nextBtn{background:#5cb84a;color:#fff;box-shadow:0 3px 0 #3c8a30}
 #hand{position:absolute;left:0;top:0;width:46px;pointer-events:none;z-index:20;transform-origin:18px 4px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
 #hand[hidden]{display:none}
-#hand canvas{position:absolute;width:40px;height:40px;left:-30px;top:-34px}
+#handRing{position:absolute;left:-8px;top:-22px;width:52px;height:52px;border-radius:50%;display:none;background:conic-gradient(#fff8ea var(--p,0deg),rgba(255,248,234,.25) 0);-webkit-mask:radial-gradient(circle,transparent 19px,#000 20px);mask:radial-gradient(circle,transparent 19px,#000 20px)}
+#hand canvas{position:absolute;width:44px;height:44px;left:-32px;top:-38px}
 #ghost{position:fixed;left:0;top:0;width:56px;height:56px;pointer-events:none;z-index:30;filter:drop-shadow(0 6px 4px rgba(0,0,0,.25))}
 #ghost[hidden]{display:none}
-@media (prefers-reduced-motion:reduce){#flow.pulse,.card.nudge,#seedCv{animation:none}}
+#ghostDots,#handDots{display:flex;gap:3px;justify-content:center}
+#ghostDots i,#handDots i{width:11px;height:11px;border-radius:50%;background:#fff8ea;border:2px solid #22361a}
+#handDots{position:absolute;left:-40px;top:-50px;width:60px}
+@media (prefers-reduced-motion:reduce){#flow.pulse,.card.nudge,.card.gulp,#seedCv{animation:none}}
 </style>
 </head>
 <body>
@@ -91,8 +98,8 @@ footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
     <div id="tray"></div>
     <button class="btn" id="flow"><svg viewBox="0 0 24 24"><path d="M12 2C9 7 5 10.5 5 15a7 7 0 0 0 14 0c0-4.5-4-8-7-13z" fill="#fff"/></svg>Let the water flow</button>
   </footer>
-  <div id="hand" hidden><canvas id="handSeed"></canvas><svg viewBox="0 0 48 56"><path d="M18 3c3 0 5 2 5 5v17l2-1v-5c0-3 5-3 5 0v6l2-1v-2c0-3 5-3 5 0v4h1c0-3 5-3 5 0v13c0 9-6 15-15 15h-3c-6 0-10-3-13-8L4 32c-2-3 2-6 5-4l4 4V8c0-3 2-5 5-5z" fill="#fff" stroke="#2b2b2b" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
-  <div id="ghost" hidden><canvas id="ghostCv" style="width:56px;height:56px"></canvas></div>
+  <div id="hand" hidden><div id="handRing"></div><div id="handDots"></div><canvas id="handSeed"></canvas><svg viewBox="0 0 48 56"><path d="M18 3c3 0 5 2 5 5v17l2-1v-5c0-3 5-3 5 0v6l2-1v-2c0-3 5-3 5 0v4h1c0-3 5-3 5 0v13c0 9-6 15-15 15h-3c-6 0-10-3-13-8L4 32c-2-3 2-6 5-4l4 4V8c0-3 2-5 5-5z" fill="#fff" stroke="#2b2b2b" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+  <div id="ghost" hidden><canvas id="ghostCv" style="width:56px;height:56px"></canvas><div id="ghostDots"></div></div>
 </div>
 <script>
 {
@@ -109,8 +116,8 @@ const LEVELS=[
   {nk:'radish',map:['aWb'],key:{a:'radish',b:'radish'},seed:1,scramble:0,tut:1},
   {nk:'carrot',map:['aaW','bbr'],key:{a:'carrot',b:'carrot',r:'radish'},seed:2,scramble:0,tut:2},
   {nk:'lettuce',map:['aaW','bb.'],key:{a:'lettuce',b:'lettuce'},seed:3,scramble:1,tut:3},
-  {nk:'blueberry',map:['aadW','acde','.cfe'],key:{a:'blueberry',c:'lettuce',d:'carrot',e:'carrot',f:'radish'},seed:4,scramble:2},
-  {nk:'corn',c:4,r:4,w:1,pool:['corn','carrot','lettuce','blueberry','radish'],need:2,seed:5,mix:.45},
+  {nk:'blueberry',map:['aadW','acde','.cfe'],key:{a:'blueberry',c:'lettuce',d:'carrot',e:'carrot',f:'radish'},seed:4,scramble:2,tut:4},
+  {nk:'corn',c:4,r:4,w:1,pool:['corn','carrot','lettuce','blueberry','radish'],need:2,seed:5,mix:.45,tut:5,misplace:'corn'},
   {nk:'tomato',c:5,r:4,w:1,pool:['tomato','corn','blueberry','carrot','lettuce'],need:2,seed:6,mix:.55},
   {nk:'eggplant',c:5,r:5,w:2,pool:['eggplant','tomato','corn','lettuce','radish'],need:2,seed:7,mix:.65},
   {nk:'cauliflower',c:5,r:6,w:2,pool:['cauliflower','eggplant','carrot','blueberry','tomato'],need:2,seed:8,mix:.7},
@@ -226,6 +233,58 @@ function drawPlant(X,kind,cx,cy,s,k){
   X.fillStyle='rgba(0,0,0,.18)';X.beginPath();X.ellipse(0,s*.17,s*.27,s*.09,0,0,7);X.fill();
   SPR[kind](X,s);X.restore();
 }
+// seeds: each plant has its own seed shape and an exaggerated colour, so the grown plant stays a surprise until harvest
+const SEED={radish:['round','#c4534a'],carrot:['oval','#c9a26b'],lettuce:['slim','#b3c77f'],blueberry:['round','#3d4fa8'],corn:['kernel','#ffd84a'],
+  tomato:['disk','#f2b49c'],eggplant:['kidney','#c9a7dc'],cauliflower:['round','#7a4a2a'],sunflower:['drop','#2e2e2e'],watermelon:['drop','#2b1d16']};
+function seedPath(X,shape,s){X.beginPath();
+  if(shape==='round')X.arc(0,0,s*.38,0,7);
+  else if(shape==='oval')X.ellipse(0,0,s*.27,s*.45,0,0,7);
+  else if(shape==='disk')X.ellipse(0,0,s*.44,s*.36,0,0,7);
+  else if(shape==='kernel'){X.moveTo(-s*.34,-s*.38);X.quadraticCurveTo(0,-s*.5,s*.34,-s*.38);X.quadraticCurveTo(s*.38,s*.1,s*.12,s*.42);X.quadraticCurveTo(0,s*.52,-s*.12,s*.42);X.quadraticCurveTo(-s*.38,s*.1,-s*.34,-s*.38)}
+  else if(shape==='kidney'){X.moveTo(-s*.42,0);X.bezierCurveTo(-s*.42,-s*.42,s*.42,-s*.42,s*.42,0);X.bezierCurveTo(s*.42,s*.36,s*.1,s*.36,0,s*.17);X.bezierCurveTo(-s*.1,s*.36,-s*.42,s*.36,-s*.42,0)}
+  else{const w=shape==='slim'?.3:.42;X.moveTo(0,-s*.55);X.bezierCurveTo(s*w,-s*.2,s*w,s*.45,0,s*.5);X.bezierCurveTo(-s*w,s*.45,-s*w,-s*.2,0,-s*.55)}}
+function drawSeed(X,kind,x,y,s,rot){const[shape,col]=SEED[kind];X.save();X.translate(x,y);X.rotate(rot);
+  seedPath(X,shape,s);X.fillStyle=col;X.fill();X.lineWidth=Math.max(1,s*.05);X.strokeStyle='rgba(40,20,5,.3)';X.stroke();
+  X.save();seedPath(X,shape,s);X.clip();
+  X.fillStyle='rgba(0,0,0,.14)';X.beginPath();X.ellipse(s*.22,s*.18,s*.4,s*.5,0,0,7);X.fill();
+  if(kind==='carrot'){X.strokeStyle='rgba(90,60,25,.45)';X.lineWidth=s*.035;for(const dx of[-.1,0,.1]){X.beginPath();X.moveTo(s*dx,-s*.4);X.lineTo(s*dx,s*.4);X.stroke()}}
+  if(kind==='sunflower'){X.strokeStyle='#f1f1f1';X.lineWidth=s*.06;for(const dx of[-.12,.12]){X.beginPath();X.moveTo(s*dx,-s*.4);X.lineTo(s*dx*1.2,s*.45);X.stroke()}}
+  if(kind==='tomato'){X.fillStyle='rgba(255,255,255,.5)';for(let a=0;a<10;a++){X.beginPath();X.arc(Math.cos(a*.63)*s*.36,Math.sin(a*.63)*s*.29,s*.03,0,7);X.fill()}}
+  X.restore();
+  X.fillStyle='rgba(255,255,255,.45)';X.beginPath();X.ellipse(-s*.1,-s*.16,s*.07,s*.12,-.4,0,7);X.fill();X.restore()}
+function drawSeeds(cv,kind,W,H=W){const d=devicePixelRatio||1;cv.width=W*d;cv.height=H*d;const X=cv.getContext('2d');X.setTransform(d,0,0,d,0,0);X.clearRect(0,0,W,H);
+  const s=Math.min(W,H)*.5,cx=W/2,cy=H*.52;
+  X.fillStyle='rgba(0,0,0,.13)';X.beginPath();X.ellipse(cx,cy+s*.48,s*.8,s*.12,0,0,7);X.fill();
+  drawSeed(X,kind,cx-s*.5,cy+s*.12,s*.62,-.6);drawSeed(X,kind,cx+s*.52,cy+s*.16,s*.58,.7);drawSeed(X,kind,cx,cy-s*.02,s,.15)}
+function seedCluster(X,kind,cx,cy,s){drawSeed(X,kind,cx-s*.5,cy+s*.12,s*.62,-.6);drawSeed(X,kind,cx+s*.52,cy+s*.16,s*.58,.7);drawSeed(X,kind,cx,cy-s*.02,s,.15)}
+// vintage seed-packet print of the plant: flat two-colour fill (leaf green + crop colour), dark ink line, colour slightly off-register
+const INK='#3b2a1c',LEAF='#6f9e4f',printCache=new Map();
+function mixHex(a,b,t){const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),A=p(a),B=p(b);return A.map((v,i)=>Math.round(v+(B[i]-v)*t))}
+function vintagePrint(kind,w,h,d){const key=kind+w+'x'+h+'@'+d;if(printCache.has(key))return printCache.get(key);
+  const W=Math.round(w*d),H=Math.round(h*d),src=document.createElement('canvas');src.width=W;src.height=H;const S=src.getContext('2d');S.setTransform(d,0,0,d,0,0);
+  drawPlant(S,kind,w/2,h*.56,w*1.18,1);
+  const im=S.getImageData(0,0,W,H).data,cls=new Uint8Array(W*H);
+  for(let i=0;i<W*H;i++){const r=im[i*4],g=im[i*4+1],b=im[i*4+2],a=im[i*4+3];if(a<120)continue;cls[i]=(kind==='watermelon'?g<125:r+g+b<110)?3:g>r*1.06&&g>b?1:2}
+  const body=mixHex(PL[kind].acc,'#c8b27f',.22),leaf=mixHex(LEAF,'#c8b27f',.1),ink=mixHex(INK,INK,0),rad=Math.max(1,Math.round(d*.75));
+  const fill=new ImageData(W,H),line=new ImageData(W,H);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=y*W+x,c=cls[i];if(!c)continue;const col=c===1?leaf:c===2?body:kind==='watermelon'?[52,98,52]:ink;fill.data.set([...col,255],i*4);
+    let edge=false;for(let dy=-rad;dy<=rad&&!edge;dy++)for(let dx=-rad;dx<=rad;dx++){const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=W||yy>=H||cls[yy*W+xx]!==c){edge=true;break}}
+    if(edge)line.data.set([...ink,235],i*4)}
+  const mk=img=>{const c=document.createElement('canvas');c.width=W;c.height=H;c.getContext('2d').putImageData(img,0,0);return c};
+  const out={fill:mk(fill),line:mk(line)};printCache.set(key,out);return out}
+// seed packet: crimped paper sachet with a vintage print of the plant on its label, seeds peeking out of the top
+function drawPacket(cv,kind,W,H=W){const d=devicePixelRatio||1;cv.width=W*d;cv.height=H*d;const X=cv.getContext('2d');X.setTransform(d,0,0,d,0,0);X.clearRect(0,0,W,H);
+  const x0=W*.12,w=W*.76,y0=H*.17,h=H*.77,acc=PL[kind].acc;
+  X.fillStyle='rgba(0,0,0,.14)';X.beginPath();X.ellipse(W/2,y0+h+H*.02,w*.5,H*.04,0,0,7);X.fill();
+  [[-.17,0,-.5],[.02,-.06,.25],[.19,.01,.7]].forEach(([dx,dy,r])=>drawSeed(X,kind,W/2+dx*w,y0+dy*H+H*.02,W*.16,r));
+  X.beginPath();const teeth=6;X.moveTo(x0,y0+H*.05);for(let t=0;t<=teeth;t++)X.lineTo(x0+w*t/teeth,y0+(t%2?0:H*.035));X.lineTo(x0+w,y0+h-4);X.quadraticCurveTo(x0+w,y0+h,x0+w-4,y0+h);X.lineTo(x0+4,y0+h);X.quadraticCurveTo(x0,y0+h,x0,y0+h-4);X.closePath();
+  X.fillStyle='#f6e7c6';X.fill();X.save();X.clip();X.fillStyle='#e8d3a7';X.fillRect(x0+w*.82,y0,w*.18,h);X.fillStyle='#dcc393';X.fillRect(x0,y0+H*.07,w,H*.025);X.restore();
+  const lx=x0+w*.1,ly=y0+h*.2,lw=w*.8,lh=h*.64;
+  X.fillStyle='#fbf1da';X.beginPath();X.roundRect(lx,ly,lw,lh,4);X.fill();
+  X.save();X.globalAlpha=.18;X.fillStyle=acc;X.beginPath();X.roundRect(lx,ly,lw,lh,4);X.fill();X.restore();
+  X.save();X.beginPath();X.roundRect(lx,ly,lw,lh,4);X.clip();const pr=vintagePrint(kind,lw,lh,d),off=Math.max(.8,W*.022);
+  X.globalAlpha=.92;X.drawImage(pr.fill,lx+off,ly+off*.7,lw,lh);X.globalAlpha=1;X.drawImage(pr.line,lx,ly,lw,lh);X.restore();
+  X.strokeStyle='rgba(90,60,25,.35)';X.lineWidth=1;X.beginPath();X.roundRect(lx,ly,lw,lh,4);X.stroke()}
 function drawIcon(cv,kind,css){const d=devicePixelRatio||1;cv.width=css*d;cv.height=css*d;const X=cv.getContext('2d');X.setTransform(d,0,0,d,0,0);X.clearRect(0,0,css,css);drawPlant(X,kind,css/2,css*.52,css*1.25,1)}
 
 /* ---------- game state ---------- */
@@ -234,7 +293,8 @@ const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lvlIdx=0;try{lvlIdx=Math.min(LEVELS.length-1,+localStorage.getItem('pickyLvl10')||0)}catch(e){}
 let G,L,occ,plants,seedLeft,sel,drag,press,cardPress,state,flowT0,dist,conn,rotT,maxD,flash,shakeUntil,parts,lay={},W=0,H=0,toastTimer,pid=0;
-let cues={damp:false,click:true,sprout:true},hintsLeft=3,hintUntil=0,joints=[],splashed=new Set(),actx,pointerActive=false,lastInput=0,handT0=0,handKind=null,seep=false,blinkT=-1e9;
+let cues={damp:false,click:true,sprout:true},hintsLeft=3,hintUntil=0,joints=[],splashed=new Set(),actx,pointerActive=false,lastInput=0,handT0=0,handKind=null,seep=false,blinkT=-1e9,soilHint=null,fade=null,demoPull=null,won=false,pulling=[],stuck=false,learnedPull=false;
+try{learnedPull=!!localStorage.getItem('pickyPulled')}catch(e){}
 try{Object.assign(cues,JSON.parse(localStorage.getItem('pickyCues')||'{}'))}catch(e){}
 const cue=k=>L.tut?k!=='damp':cues[k];
 
@@ -242,12 +302,37 @@ function load(i){
   lvlIdx=i;L=LEVELS[i];try{localStorage.setItem('pickyLvl10',i)}catch(e){}
   G=gen(L);occ=new Array(G.N).fill(null);G.springs.forEach(s=>occ[s]={type:'water'});
   plants=[];seedLeft={...G.seeds};rotT=new Array(G.N).fill(-1e9);
-  drag=null;press=null;cardPress=null;state='edit';dist=null;flash=null;shakeUntil=0;parts=[];joints=[];hintUntil=0;
+  won=false;drag=null;press=null;cardPress=null;state='edit';dist=null;flash=null;shakeUntil=0;parts=[];joints=[];hintUntil=0;
   sel=L.nk in seedLeft?L.nk:Object.keys(seedLeft)[0];
   $('lvl').textContent=`Plot ${i+1} of ${LEVELS.length}`;$('prev').disabled=i===0;$('next').disabled=i===LEVELS.length-1;
   $('cues').hidden=!!L.tut;$('win').hidden=true;handT0=performance.now()+600;
+  if(L.misplace)misplace(L.misplace);
+  updStuck();
   layout();renderTray();updateConn();renderCues();
 }
+// teaching plot for pulling plants: one plant starts in a spot where the rest can no longer fit
+function shapesAt(start,kind,free){const n=PL[kind].size,out=new Map(),seen=new Set();
+  const rec=set=>{const key=[...set].sort((a,b)=>a-b).join(',');if(seen.has(key))return;seen.add(key);if(set.length===n){out.set(key,set);return}
+    for(const c of set)for(const[j]of G.nb(c))if(j>start&&!set.includes(j)&&free(j)&&G.soil[j]===PL[kind].soil)rec([...set,j])};
+  rec([start]);return[...out.values()]}
+function canComplete(taken,seeds){
+  let st=-1;for(let i=0;i<G.N;i++)if(G.open[i]&&!taken[i]){st=i;break}
+  if(st<0)return Object.values(seeds).every(v=>!v);
+  for(const k in seeds)if(seeds[k]&&G.soil[st]===PL[k].soil)for(const sh of shapesAt(st,k,j=>!taken[j])){
+    sh.forEach(c=>taken[c]=1);seeds[k]--;const ok=canComplete(taken,seeds);seeds[k]++;sh.forEach(c=>taken[c]=0);if(ok)return true}
+  return false}
+function misplace(kind){
+  const taken=occ.map(o=>o?1:0),sol=new Set(G.pieces.filter(p=>p.kind===kind).map(p=>[...p.cells].sort((a,b)=>a-b).join(',')));
+  const all=[];for(let i=0;i<G.N;i++)if(G.open[i]&&!taken[i]&&G.soil[i]===PL[kind].soil)all.push(...shapesAt(i,kind,j=>!taken[j]));
+  const cands=all.filter(sh=>!sol.has([...sh].sort((a,b)=>a-b).join(',')));
+  const seeds={...seedLeft,[kind]:seedLeft[kind]-1};
+  const pick=cands.find(sh=>{sh.forEach(c=>taken[c]=1);const ok=canComplete(taken,seeds);sh.forEach(c=>taken[c]=0);return!ok})||cands[0];
+  if(!pick)return;const id=++pid;pick.forEach(c=>occ[c]={type:'plant',id,kind});plants.push({id,kind,cells:pick,pre:true});seedLeft[kind]--}
+function updStuck(){
+  const left=Object.keys(seedLeft).filter(k=>seedLeft[k]>0);
+  if(!left.length||!plants.length){stuck=false;return}
+  if(G.N<=20)stuck=!canComplete(occ.map(o=>o?1:0),{...seedLeft});
+  else stuck=!left.some(k=>{for(let i=0;i<G.N;i++)if(G.open[i]&&fits(i,k))return true;return false})}
 function updateConn(){conn=reach(G.holes,G.springs,G.nb,G.N)}
 function toast(t,ms=2400){const el=$('toast');el.textContent=t;el.classList.remove('hide');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hide'),ms)}
 const kindsInLevel=()=>Object.keys(PL).filter(k=>G.seeds[k]);
@@ -255,9 +340,9 @@ function renderTray(){
   const ks=kindsInLevel();
   $('tray').style.gridTemplateColumns=`repeat(${ks.length},minmax(0,${ks.length<3?'120px':'1fr'}))`;
   $('tray').innerHTML=ks.map(k=>{const p=PL[k];
-    return `<button class="card" data-k="${k}" aria-pressed="${sel===k}" ${seedLeft[k]?'':'disabled'}><canvas></canvas><b>${p.name}</b><span class="pips">${`<i style="background:${SOIL[p.soil].top}"></i>`.repeat(p.size)}</span><span class="n">×${seedLeft[k]}</span></button>`}).join('');
-  $('tray').querySelectorAll('.card').forEach(b=>drawIcon(b.querySelector('canvas'),b.dataset.k,40));
-  $('flow').disabled=state==='flowing';
+    return `<button class="card" data-k="${k}" aria-pressed="${sel===k}" ${seedLeft[k]?'':'disabled'}><canvas></canvas><b>${p.name}</b><span class="soil" style="background:${SOIL[p.soil].top}">${'<i></i>'.repeat(p.size)}</span><span class="n">×${seedLeft[k]}</span></button>`}).join('');
+  $('tray').querySelectorAll('.card').forEach(b=>drawPacket(b.querySelector('canvas'),b.dataset.k,52,58));
+  $('flow').disabled=state==='flowing'||won;
 }
 function renderCues(){document.querySelectorAll('.chip[data-c]').forEach(b=>b.setAttribute('aria-pressed',!!cues[b.dataset.c]));$('hint').textContent=`Hint ×${hintsLeft}`}
 $('cues').addEventListener('click',e=>{const b=e.target.closest('.chip[data-c]');if(!b)return;cues[b.dataset.c]=!cues[b.dataset.c];
@@ -286,72 +371,79 @@ function rotate(i){resetFlow();G.holes[i]=rotm(G.holes[i]);const now=performance
   if(!cue('click'))return sfx(300,.04,.06,'triangle');let n=0;
   for(const[j,b]of G.nb(i))if(G.holes[i]&b&&G.holes[j]&OPP[b]){joints.push({i,j,t0:now+170});n++}
   sfx(300,.04,.06,'triangle');if(n)setTimeout(()=>sfx(520+n*120,.1,.12,'triangle'),170)}
-function pullPlant(i){const o=occ[i];if(!o||o.type!=='plant')return false;resetFlow();
+function pullPlant(i,byPlayer=true){const o=occ[i];if(!o||o.type!=='plant')return false;resetFlow();
   const p=plants.find(q=>q.id===o.id);p.cells.forEach(k=>occ[k]=null);plants=plants.filter(q=>q!==p);seedLeft[p.kind]++;sel=p.kind;
-  renderTray();navigator.vibrate?.(15);sfx(500,.06,.1);return true}
+  if(byPlayer&&!learnedPull){learnedPull=true;try{localStorage.setItem('pickyPulled','1')}catch(e){}}
+  navigator.vibrate?.(15);sfx(500,.06,.1);pulling.push({kind:p.kind,cells:p.cells,t:performance.now()});
+  seedsHome(p.kind,p.cells);updStuck();return true}
+function seedsHome(kind,cells){
+  const card=$('tray').querySelector(`.card[data-k="${kind}"]`);if(!card||reduce){renderTray();return}
+  const cr=card.getBoundingClientRect(),vr=cv.getBoundingClientRect(),tx=cr.left+cr.width/2,ty=cr.top+cr.height*.35;let left=cells.length;
+  cells.forEach((c,n)=>{const[x,y]=center(c),sx=vr.left+x,sy=vr.top+y,el=document.createElement('canvas');el.className='flyseed';{const d=devicePixelRatio||1;el.width=el.height=30*d;const X=el.getContext('2d');X.setTransform(d,0,0,d,0,0);drawSeed(X,kind,15,15,24,.2+n)}document.body.appendChild(el);
+    const mx=(sx+tx)/2,my=Math.min(sy,ty)-90-n*12;
+    const an=el.animate([{transform:`translate(${sx-15}px,${sy-15}px) scale(.4)`},{transform:`translate(${sx-15}px,${sy-34}px) scale(1.15)`,offset:.18},{transform:`translate(${mx-15}px,${my-15}px) scale(1)`,offset:.55},{transform:`translate(${tx-15}px,${ty-15}px) scale(.5)`,opacity:.6}],{duration:620,delay:150+n*90,easing:'ease-in-out',fill:'both'});
+    an.onfinish=()=>{el.remove();sfx(700+n*80,.05,.08,'triangle');if(--left===0){const c2=$('tray').querySelector(`.card[data-k="${kind}"]`);if(c2){c2.disabled=!seedLeft[kind];c2.querySelector('.n').textContent=`×${seedLeft[kind]}`;c2.classList.add('gulp');setTimeout(()=>c2.classList.remove('gulp'),400)}}}})}
 function canStart(i,kind){return i>=0&&!occ[i]&&G.soil[i]===PL[kind].soil}
-function extend(i){const p=PL[drag.kind];
-  if(i<0||drag.cells.includes(i)||occ[i]||drag.cells.length>=p.size)return;
-  if(!drag.cells.some(k=>adj(k,i)))return;
-  if(G.soil[i]!==p.soil){if(!flash||flash.i!==i)flash={cells:[i],t:performance.now()};return}
-  drag.cells.push(i);sfx(380+drag.cells.length*60,.05,.06,'triangle')}
+// room check: the empty patch of matching soil around a tile must hold the whole plant
+function roomAt(i,kind){if(!canStart(i,kind))return 0;const seen=new Set([i]),q=[i];while(q.length){const a=q.pop();for(const[j]of G.nb(a))if(!seen.has(j)&&canStart(j,kind)){seen.add(j);q.push(j)}}return seen.size}
+const fits=(i,kind)=>roomAt(i,kind)>=PL[kind].size;
+function connected(cells){const set=new Set(cells),seen=new Set([cells[0]]),q=[cells[0]];while(q.length){const a=q.pop();for(const[j]of G.nb(a))if(set.has(j)&&!seen.has(j)){seen.add(j);q.push(j)}}return seen.size===cells.length}
+function updDots(){if(!cardPress)return;const p=PL[cardPress.k],n=drag?drag.cells.length:0;
+  $('ghostDots').innerHTML=Array.from({length:p.size},(_,m)=>`<i style="${m<n?`background:${p.acc}`:''}"></i>`).join('')}
+// carrying a seed: the bed follows the finger; once it is longer than the plant, the oldest tile it can spare drops off
+function carry(i){
+  const k=cardPress.k,p=PL[k];
+  if(i===cardPress.last)return;cardPress.last=i;if(i<0)return;
+  if(drag&&drag.cells.includes(i))return;
+  if(!fits(i,k)){if(!occ[i]&&G.soil[i]!==p.soil)flash={cells:[i],t:performance.now()};return}
+  if(!drag||!drag.cells.some(c=>adj(c,i)))drag={kind:k,cells:[i]};
+  else{const c=[...drag.cells,i];
+    while(c.length>p.size){const idx=c.findIndex((x,n)=>n<c.length-1&&connected(c.filter((_,m)=>m!==n)));c.splice(idx<0?0:idx,1)}
+    drag.cells=c}
+  sfx(380+drag.cells.length*60,.05,.06,'triangle');updDots()}
 function commitDrag(){
-  if(!drag)return;const p=PL[drag.kind];
-  if(drag.cells.length===p.size){const id=++pid;drag.cells.forEach(k=>occ[k]={type:'plant',id,kind:drag.kind});plants.push({id,kind:drag.kind,cells:drag.cells});seedLeft[drag.kind]--;sfx(440,.08,.15);
-    if(!seedLeft[drag.kind])sel=Object.keys(seedLeft).find(k=>seedLeft[k]>0)||null;renderTray()}
-  else flash={cells:drag.cells.slice(),t:performance.now()};
-  drag=null}
+  const id=++pid;drag.cells.forEach(k=>occ[k]={type:'plant',id,kind:drag.kind});plants.push({id,kind:drag.kind,cells:drag.cells});seedLeft[drag.kind]--;sfx(440,.08,.15);updStuck();
+  if(!seedLeft[drag.kind])sel=Object.keys(seedLeft).find(k=>seedLeft[k]>0)||null;drag=null;renderTray()}
+function flyBack(card){const g=$('ghost'),r=card.getBoundingClientRect(),from=g.style.transform,to=`translate(${r.left+r.width/2-28}px,${r.top}px) scale(.55)`;
+  sfx(560,.05,.14,'sine',.6);
+  try{const an=g.animate([{transform:from,opacity:1},{transform:to,opacity:.15}],{duration:reduce?1:320,easing:'ease-in'});an.onfinish=()=>{g.hidden=true}}catch(e){g.hidden=true}}
 
-/* board input: tap = rotate, long-press = pull plant, drag from tile = plant */
+/* board input: tap = rotate, long-press = pull a plant back to its packet */
 cv.addEventListener('pointerdown',e=>{
-  if(state==='flowing'||!$('win').hidden)return;
+  if(state==='flowing'||won)return;
   const i=cellAt(e.offsetX,e.offsetY);if(i<0)return;
   cv.setPointerCapture(e.pointerId);
   press={i,done:false,moved:false};
   press.lp=setTimeout(()=>{if(press&&!press.moved&&pullPlant(i))press.done=true},450);
 });
-cv.addEventListener('pointermove',e=>{
-  if(!press)return;const j=cellAt(e.offsetX,e.offsetY);
-  if(drag)return extend(j);
-  if(j<0||j===press.i||press.done)return;
-  press.moved=true;clearTimeout(press.lp);
-  const i=press.i;
-  if(!sel||!seedLeft[sel]||occ[i]){press.done=true;return}
-  if(!canStart(i,sel)){flash={cells:[i],t:performance.now()};press.done=true;return}
-  resetFlow();drag={kind:sel,cells:[i]};extend(j);
-});
-const endBoard=()=>{
-  if(press){clearTimeout(press.lp);if(!drag&&!press.moved&&!press.done)rotate(press.i);press=null}
-  commitDrag()};
+cv.addEventListener('pointermove',e=>{if(!press||press.moved)return;if(cellAt(e.offsetX,e.offsetY)!==press.i){press.moved=true;clearTimeout(press.lp)}});
+const endBoard=()=>{if(press){clearTimeout(press.lp);if(!press.moved&&!press.done)rotate(press.i);press=null}};
 cv.addEventListener('pointerup',endBoard);cv.addEventListener('pointercancel',endBoard);
 
-/* tray input: tap = select, drag a seed card onto the plot = plant */
+/* tray input: drag a seed packet across the plot to plant it in one stroke; tap a packet to see where it grows */
 $('tray').addEventListener('pointerdown',e=>{
-  const b=e.target.closest('.card');if(!b||b.disabled||state==='flowing'||!$('win').hidden)return;
-  b.setPointerCapture(e.pointerId);cardPress={k:b.dataset.k,x:e.clientX,y:e.clientY,moved:false,el:b};
+  const b=e.target.closest('.card');if(!b||b.disabled||state==='flowing'||won)return;
+  b.setPointerCapture(e.pointerId);cardPress={k:b.dataset.k,x:e.clientX,y:e.clientY,moved:false,el:b,last:-2};
 });
 $('tray').addEventListener('pointermove',e=>{
   if(!cardPress)return;
   if(!cardPress.moved&&Math.hypot(e.clientX-cardPress.x,e.clientY-cardPress.y)<8)return;
-  if(!cardPress.moved){cardPress.moved=true;drawIcon($('ghostCv'),cardPress.k,56);$('ghost').hidden=false;resetFlow()}
-  $('ghost').style.transform=`translate(${e.clientX-28}px,${e.clientY-70}px)`;
-  const r=cv.getBoundingClientRect(),i=cellAt(e.clientX-r.left,e.clientY-r.top);
-  // carrying a seed: planting starts once the finger settles on a tile, so passing over tiles on the way doesn't plant
-  if(!drag){if(i!==cardPress.hover){cardPress.hover=i;cardPress.ht=performance.now();
-      if(i>=0&&!canStart(i,cardPress.k)&&!occ[i])flash={cells:[i],t:performance.now()}}}
-  else extend(i);
+  if(!cardPress.moved){cardPress.moved=true;drag=null;drawPacket($('ghostCv'),cardPress.k,56);$('ghost').hidden=false;resetFlow();updDots()}
+  $('ghost').style.transform=`translate(${e.clientX-28}px,${e.clientY-96}px)`;
+  const r=cv.getBoundingClientRect();carry(cellAt(e.clientX-r.left,e.clientY-r.top));
 });
 const endCard=()=>{
-  if(!cardPress)return;const cp=cardPress,k=cp.k,moved=cp.moved;cardPress=null;$('ghost').hidden=true;
-  if(!moved){sel=k;renderTray();return}
-  if(!drag&&canStart(cp.hover,k))drag={kind:k,cells:[cp.hover]};
-  if(drag){sel=k;commitDrag()}};
+  if(!cardPress)return;const cp=cardPress,k=cp.k;cardPress=null;
+  if(!cp.moved){sel=k;renderTray();soilHint={kind:k,t:performance.now()};return}
+  if(drag&&drag.cells.length===PL[k].size){$('ghost').hidden=true;sel=k;commitDrag();return}
+  // not enough tiles yet: the seed floats back to its packet, no penalty
+  if(drag)fade={cells:drag.cells,t:performance.now()};drag=null;flyBack(cp.el)};
 $('tray').addEventListener('pointerup',endCard);$('tray').addEventListener('pointercancel',endCard);
 addEventListener('pointerdown',()=>{pointerActive=true;try{actx=actx||new AudioContext();actx.resume?.()}catch(e){}},true);
 addEventListener('pointerup',()=>{pointerActive=false;lastInput=performance.now()},true);
 
 $('flow').addEventListener('click',()=>{
-  if(state==='flowing')return;
+  if(state==='flowing'||won)return;
   dist=reach(G.holes,G.springs,G.nb,G.N);
   maxD=Math.max(0,...dist.filter(isFinite));
   plants.forEach(p=>p.d=Math.min(...p.cells.map(k=>dist[k])));
@@ -370,12 +462,12 @@ function finish(){
   const dry=plants.filter(p=>!isFinite(p.d)),left=Object.values(seedLeft).some(v=>v);
   if(dry.length){shakeUntil=performance.now()+800;sfx(160,.1,.3,'triangle')}
   else if(left){$('tray').querySelectorAll('.card:not(:disabled)').forEach(b=>{b.classList.add('nudge');setTimeout(()=>b.classList.remove('nudge'),950)})}
-  else{
+  else{won=true;renderTray();
     plants.forEach(p=>p.cells.forEach(k=>{const[x,y]=center(k);for(let n=0;n<5;n++)parts.push({x,y,vx:(Math.random()-.5)*2,vy:-2-Math.random()*2.5,life:1,col:PL[p.kind].acc})}));
     const nx=LEVELS[lvlIdx+1];
     $('winT').textContent=nx?'Plot harvested!':'Farm complete!';
     $('seedBox').hidden=!nx;$('nextBtn').hidden=!nx;
-    setTimeout(()=>{$('win').hidden=false;if(nx){drawIcon($('seedCv'),nx.nk,110);$('seedName').textContent=PL[nx.nk].name;sfx(660,.1,.25)}$(nx?'nextBtn':'again').focus()},900);
+    setTimeout(()=>{$('win').hidden=false;if(nx){drawPacket($('seedCv'),nx.nk,110);$('seedName').textContent=PL[nx.nk].name;sfx(660,.1,.25)}$(nx?'nextBtn':'again').focus()},900);
   }
 }
 $('reset').onclick=()=>load(lvlIdx);$('again').onclick=()=>load(lvlIdx);
@@ -388,10 +480,14 @@ function orderCells(cells){const o=[cells[0]],rest=cells.slice(1);while(rest.len
 function appPt(el){const a=$('app').getBoundingClientRect(),r=el.getBoundingClientRect();return[r.left-a.left+r.width/2,r.top-a.top+r.height/2]}
 function cellPt(i){const a=$('app').getBoundingClientRect(),r=cv.getBoundingClientRect(),[x,y]=center(i);return[r.left-a.left+x,r.top-a.top+y]}
 function tutTarget(){
-  if(!L.tut||state!=='edit'||!$('win').hidden)return null;
+  if(state!=='edit'||!$('win').hidden||won)return null;
+  if(stuck&&!learnedPull&&plants.length&&L.tut!==5){const lp=plants[plants.length-1];return{hold:cellPt(lp.cells[0]),id:lp.id}}
+  if(!L.tut)return null;
   const all=!Object.values(seedLeft).some(v=>v),card=k=>$('tray').querySelector(`.card[data-k="${k}"]`);
   if(L.tut===1){if(!plants.length)return{kind:'radish',pts:[appPt(card('radish')),cellPt(solPiece('radish').cells[0])]};if(all)return{tap:appPt($('flow'))};return null}
   if(L.tut===2){if(!plants.some(p=>p.kind==='carrot')){const pc=solPiece('carrot');return{kind:'carrot',pts:[appPt(card('carrot')),...orderCells(pc.cells).map(cellPt)]}}return null}
+  if(L.tut===4&&!plants.some(p=>p.kind==='blueberry')){const pc=solPiece('blueberry');return{kind:'blueberry',pts:[appPt(card('blueberry')),...orderCells(pc.cells).map(cellPt)]}}
+  if(L.tut===5){const pp=plants.find(p=>p.pre);if(pp)return{hold:cellPt(pp.cells[1]??pp.cells[0]),id:pp.id};return null}
   if(L.tut===3&&all&&plants.some(p=>!p.cells.some(k=>isFinite(conn[k])))){
     let best=-1;for(let i=0;i<G.N;i++)if(G.open[i]&&G.holes[i]!==G.solved[i]&&(best<0||G.solvedDist[i]<G.solvedDist[best]))best=i;
     if(best>=0)return{tap:cellPt(best)}}
@@ -401,13 +497,17 @@ function drawHand(now){
   const el=$('hand'),t=tutTarget();
   if(!t||pointerActive||cardPress||now-lastInput<1300||now<handT0){el.hidden=true;if(!t||pointerActive)handT0=Math.max(handT0,now);return}
   el.hidden=false;const e=now-handT0;let x,y,sc=1,op=1;
-  const hs=$('handSeed');
-  if(t.tap){const ph=(e%1100)/1100;[x,y]=t.tap;sc=ph<.25?1-ph*.6:ph<.45?.85+(ph-.25)*.75:1;hs.style.display='none'}
-  else{const pts=t.pts,D=pts.length>2?2600:2000,ph=(e%D)/D;
-    if(handKind!==t.kind){drawIcon(hs,t.kind,40);handKind=t.kind}
+  const hs=$('handSeed'),hd=$('handDots');hd.style.display='none';
+  const ring=$('handRing');ring.style.display='none';demoPull=null;
+  if(t.hold){const ph=(e%1900)/1900;[x,y]=t.hold;hs.style.display='none';
+    if(ph<.15){op=ph/.15}else if(ph<.75){sc=.85;const pr=(ph-.15)/.6;ring.style.display='block';ring.style.setProperty('--p',`${pr*360}deg`);demoPull={id:t.id,a:pr}}else{op=1-(ph-.75)/.25}}
+  else if(t.tap){const ph=(e%1100)/1100;[x,y]=t.tap;sc=ph<.25?1-ph*.6:ph<.45?.85+(ph-.25)*.75:1;hs.style.display='none'}
+  else{const pts=t.pts,D=pts.length>2?3400:2000,ph=(e%D)/D,n=pts.length-1;
+    if(handKind!==t.kind){drawPacket(hs,t.kind,44);handKind=t.kind}
     hs.style.display=ph>.12&&ph<.82?'block':'none';
     if(ph<.15){[x,y]=pts[0];op=ph/.15;sc=1-ph}
-    else if(ph<.8){const u=ease((ph-.15)/.65)*(pts.length-1),k=Math.min(pts.length-2,Math.floor(u)),f=u-k;x=pts[k][0]+(pts[k+1][0]-pts[k][0])*f;y=pts[k][1]+(pts[k+1][1]-pts[k][1])*f;sc=.85}
+    else if(ph<.8){const u=((ph-.15)/.65)*n,k=Math.min(n-1,Math.floor(u)),f=ease(u-k);x=pts[k][0]+(pts[k+1][0]-pts[k][0])*f;y=pts[k][1]+(pts[k+1][1]-pts[k][1])*f;sc=.85;
+      const filled=Math.min(n,Math.floor(u+.02));hd.style.display='flex';hd.innerHTML=Array.from({length:n},(_,m)=>`<i style="${m<filled?`background:${PL[t.kind].acc}`:''}"></i>`).join('')}
     else{[x,y]=pts.at(-1);op=1-(ph-.8)/.2;sc=.85+(ph-.8)*.75}}
   el.style.transform=`translate(${x-18}px,${y-4}px) scale(${sc})`;el.style.opacity=op;
 }
@@ -432,7 +532,6 @@ function frame(now){
   if(state==='flowing'){if(!seep&&tf>maxD+3)finish();else if(seep&&tf>maxD+13)endSeep();
     if(seep&&tf>maxD+1.5&&!G.soaked){G.soaked=1;sfx(260,.12,.6,'sine',.35)}}
   if(state!=='flowing')G.soaked=0;
-  if(cardPress&&cardPress.moved&&!drag&&now-cardPress.ht>140&&canStart(cardPress.hover??-1,cardPress.k)){drag={kind:cardPress.k,cells:[cardPress.hover]};sfx(440,.05,.06,'triangle')}
   const all=!Object.values(seedLeft).some(v=>v);
   $('flow').classList.toggle('pulse',state==='edit'&&all&&$('win').hidden&&(L.tut!==3||plants.every(p=>p.cells.some(k=>isFinite(conn[k])))));
   const pad=ts*.16;rr(ox-pad,oy-pad+dep,G.c*ts+pad*2,G.r*ts+pad*2,ts*.2);ctx.fillStyle='#7a5430';ctx.fill();
@@ -472,8 +571,12 @@ function frame(now){
     ctx.fillStyle=`rgba(255,246,214,${1-a})`;for(let n=0;n<4;n++){const an=n*1.5708+.785,r=gw*(.8+2.4*a);ctx.beginPath();ctx.arc(mx+Math.cos(an)*r,my+Math.sin(an)*r,2.2*(1-a)+.6,0,7);ctx.fill()}});
   // picky overlay while planting
   const dk=drag?drag.kind:cardPress&&cardPress.moved?cardPress.k:null;
-  if(dk)for(let i=0;i<G.N;i++)if(G.open[i]&&(G.soil[i]!==PL[dk].soil||occ[i])){const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(25,18,8,.4)';ctx.fill()}
-  if(flash&&now-flash.t<450)flash.cells.forEach(i=>{const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(230,60,40,${.55*(1-(now-flash.t)/450)})`;ctx.fill()});
+  if(dk)for(let i=0;i<G.N;i++)if(G.open[i]&&!(drag&&drag.cells.includes(i))&&!fits(i,dk)){const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(25,18,8,.4)';ctx.fill()}
+  if(flash&&now-flash.t<450)flash.cells.forEach(i=>{const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(230,60,40,${.35*(1-(now-flash.t)/450)})`;ctx.fill()});
+  if(soilHint&&now-soilHint.t<1100&&!dk){const a=Math.sin(Math.PI*(now-soilHint.t)/1100);
+    for(let i=0;i<G.N;i++)if(G.open[i]&&fits(i,soilHint.kind)){const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(255,250,230,${.3*a})`;ctx.fill()}}
+  if(fade&&now-fade.t<350)fade.cells.forEach(i=>{const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(255,255,255,${.3*(1-(now-fade.t)/350)})`;ctx.fill()});
+  pulling=pulling.filter(q=>now-q.t<260);pulling.forEach(q=>{const k=1-(now-q.t)/260;q.cells.forEach(i=>{const[cx,cy]=center(i);ctx.save();ctx.translate(cx,cy+ts*.1);ctx.scale(k,k);ctx.translate(-cx,-cy-ts*.1);drawSprout(cx,cy,ts,false,0,null,now);ctx.restore()})});
   const burstOn=state==='flowing'&&now<flowT0;
   G.springs.forEach(i=>{const[cx,cy]=center(i);
     ctx.fillStyle='#8a8f96';ctx.beginPath();ctx.ellipse(cx,cy+ts*.04,ts*.31,ts*.25,0,0,7);ctx.fill();
@@ -484,15 +587,14 @@ function frame(now){
     p.cells.forEach(i=>{const[,,x,y,th]=center(i),inset=g+ts*.05,Lx=x+inset,T=y+inset,R=x+ts-inset,B=y+g+th-ts*.05;
       DIRS.forEach(([dx,dy],d)=>{const nx=i%G.c+dx,ny=((i/G.c)|0)+dy;if(nx>=0&&ny>=0&&nx<G.c&&ny<G.r&&set.has(ny*G.c+nx))return;ctx.beginPath();
         if(d===0){ctx.moveTo(Lx,T);ctx.lineTo(R,T)}else if(d===1){ctx.moveTo(R,T);ctx.lineTo(R,B)}else if(d===2){ctx.moveTo(Lx,B);ctx.lineTo(R,B)}else{ctx.moveTo(Lx,T);ctx.lineTo(Lx,B)}ctx.stroke()})});
-    const dry=state==='result'&&!isFinite(p.d),sh=dry&&now<shakeUntil?Math.sin(now/30)*ts*.04:0;
+    const dry=state==='result'&&!isFinite(p.d),sh=dry&&now<shakeUntil?Math.sin(now/30)*ts*.04:demoPull&&demoPull.id===p.id?Math.sin(now/35)*ts*.035*demoPull.a:0;
     const mood=state==='edit'&&(cue('sprout')||hinting)?(p.cells.some(k=>isFinite(conn[k]))?'awake':'sleepy'):null;
     if(state==='flowing'&&isFinite(p.d)&&tf>=p.d&&!splashed.has(p.id)){splashed.add(p.id);sfx(seep?520:420+splashed.size*70,seep?.06:.12,.18);
       p.cells.forEach(k=>{const[x,y]=center(k);for(let n=0;n<(seep?3:7);n++)parts.push({x,y,vx:(Math.random()-.5)*3,vy:-1.5-Math.random()*2.5,life:.8,col:n%2?'#55bdf0':'#c8efff',drop:1})})}
     p.cells.forEach(i=>{const[cx,cy]=center(i);const k=!seep&&isFinite(p.d)&&tf>=p.d?easeBack(clamp((tf-p.d)/1.4)):0;
       if(k>0)drawPlant(ctx,p.kind,cx,cy,ts,Math.max(.15,k));else drawSprout(cx,cy,ts,dry,sh,mood,now,seep&&isFinite(p.d)&&tf>=p.d?Math.sin(Math.PI*clamp((tf-p.d)/2.5)):0)})});
   if(drag){const p=PL[drag.kind];drag.cells.forEach(i=>{const[cx,cy,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();ctx.strokeStyle=p.acc;ctx.lineWidth=3;ctx.stroke();drawSprout(cx,cy,ts,false,0,null,now)});
-    if(p.size>1){const[cx,cy]=center(drag.cells.at(-1));ctx.fillStyle='#fff8ea';const R=ts*.1;
-      for(let n=0;n<p.size;n++){const x=cx+(n-(p.size-1)/2)*R*2.3,yy=cy-ts*.5;ctx.beginPath();ctx.arc(x,yy,R*.75,0,7);ctx.fillStyle=n<drag.cells.length?p.acc:'rgba(255,248,234,.85)';ctx.fill();ctx.strokeStyle='#22361a';ctx.lineWidth=1.5;ctx.stroke()}}}
+}
   parts=parts.filter(q=>(q.life-=.012)>0);parts.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.06;ctx.globalAlpha=Math.min(1,q.life*1.4);if(q.drop){ctx.fillStyle=q.col;ctx.beginPath();ctx.arc(q.x,q.y,3.2,0,7);ctx.fill()}else poly(ctx,[[q.x,q.y-5],[q.x+4,q.y],[q.x,q.y+5],[q.x-4,q.y]],q.col)});ctx.globalAlpha=1;
   drawHand(now);
 }
