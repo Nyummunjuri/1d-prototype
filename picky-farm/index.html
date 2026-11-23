@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: charming, relaxing, a tidy little farm toy
+/* VOICE: charming, relaxing, a tidy little farm toy that teaches itself
    IDEA: a wooden planter box of soil tiles with carved water grooves
    PICTURE: the plot itself, chunky low-poly tiles with depth, filling the screen
    COLOUR and TYPE: meadow green ground, warm soils, water blue accent; Fredoka
@@ -17,50 +17,64 @@
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%}
-body{margin:0;background:var(--bg2);color:var(--ink);font:16px/1.4 Fredoka,system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
-.app{max-width:520px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:radial-gradient(120% 70% at 50% 40%,var(--bg),var(--bg2))}
+body{margin:0;background:var(--bg2);color:var(--ink);font:16px/1.4 Fredoka,system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.app{position:relative;max-width:520px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:radial-gradient(120% 70% at 50% 40%,var(--bg),var(--bg2));overflow:hidden}
 header{display:flex;align-items:center;gap:8px;padding:12px 14px 4px}
-h1{font-size:26px;line-height:1.05;margin:0;font-weight:700;flex:1;letter-spacing:.2px}
+h1{font-size:26px;line-height:1.05;margin:0;font-weight:700;flex:1}
 h1 small{display:block;font-size:13px;font-weight:500;opacity:.75}
 .btn{font:inherit;font-weight:600;border:0;border-radius:14px;min-height:44px;min-width:44px;padding:0 12px;background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--line);cursor:pointer}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
-.btn:focus-visible,.card:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.btn:focus-visible,.card:focus-visible,.chip:focus-visible{outline:3px solid var(--water);outline-offset:2px}
 .btn:disabled{opacity:.4;cursor:default}
-.board{position:relative;flex:1;touch-action:none}
-.board canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
-
-.cues{display:flex;align-items:center;gap:6px;padding:4px 14px 0;flex-wrap:wrap;font-size:13px}
-.cues span{opacity:.75;margin-right:2px}
+.cues{display:flex;align-items:center;gap:6px;padding:4px 14px 0;font-size:13px}
+.cues[hidden]{display:none}
+.cues span{opacity:.75}
 .chip{font:inherit;font-size:13px;font-weight:500;color:var(--ink);background:transparent;border:2px solid var(--line);border-radius:999px;min-height:34px;padding:0 9px;cursor:pointer}
 .chip[aria-pressed=true]{background:var(--card);border-color:var(--sel)}
 .chip.hint{margin-left:auto;background:#ffd24a;border-color:#e0a91c;color:#3b2a05;font-weight:600}
-.chip:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.board{position:relative;flex:1;touch-action:none}
+.board>canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 #toast{position:absolute;left:50%;top:6px;transform:translateX(-50%);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:14px;font-size:15px;font-weight:500;box-shadow:0 4px 0 var(--line);white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;transition:opacity .25s;pointer-events:none}
 #toast.hide{opacity:0}
 footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
-#tray{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
-.card{font:inherit;color:var(--ink);background:var(--card);border:3px solid transparent;border-radius:16px;padding:6px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 var(--line);cursor:pointer;position:relative}
+#tray{display:grid;gap:6px;justify-content:center;margin-bottom:10px;touch-action:none}
+.card{font:inherit;color:var(--ink);background:var(--card);border:3px solid transparent;border-radius:16px;padding:6px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:0 4px 0 var(--line);cursor:grab;position:relative;touch-action:none}
 .card[aria-pressed=true]{border-color:var(--sel)}
 .card:disabled{opacity:.35;cursor:default}
-.card svg{width:40px;height:40px}
-.card b{font-size:14px;font-weight:600}
-.card .pips{display:flex;gap:2px}.card .pips i{width:9px;height:9px;border-radius:2px}
-.card .n{position:absolute;top:-8px;right:-6px;background:var(--ink);color:var(--card);font-size:13px;font-weight:600;border-radius:10px;padding:0 7px;line-height:20px}
+.card canvas{width:40px;height:40px}
+.card b{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.card .pips{display:flex;gap:2px}.card .pips i{width:8px;height:8px;border-radius:2px}
+.card .n{position:absolute;top:-8px;right:-5px;background:var(--ink);color:var(--card);font-size:12px;font-weight:600;border-radius:10px;padding:0 6px;line-height:19px}
+.card.nudge{animation:nudge .45s 2}
+@keyframes nudge{30%{transform:translateY(-7px)}70%{transform:translateY(2px)}}
 #flow{width:100%;min-height:52px;font-size:19px;background:var(--water);color:#fff;box-shadow:0 4px 0 #2a7fae;display:flex;align-items:center;justify-content:center;gap:8px}
 #flow svg{width:22px;height:22px}
-#win{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,40,20,.25)}
+#flow.pulse{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.04);box-shadow:0 4px 0 #2a7fae,0 0 0 9px rgba(63,169,224,.28)}}
+#win{position:absolute;inset:0;display:grid;place-items:center;background:rgba(20,40,20,.28)}
 #win[hidden]{display:none}
-#win .panel{background:var(--card);border-radius:22px;padding:22px 26px;text-align:center;box-shadow:0 6px 0 var(--line);max-width:300px}
-#win h2{font-size:30px;margin:0 0 4px;line-height:1.05}
-#win p{margin:0 0 14px}
+#win .panel{background:var(--card);border-radius:22px;padding:20px 24px;text-align:center;box-shadow:0 6px 0 var(--line);width:min(300px,86%)}
+#win h2{font-size:30px;margin:0 0 6px;line-height:1.05}
+#seedBox{margin:2px 0 14px}
+#seedBox[hidden]{display:none}
+#seedBox small{display:block;font-size:13px;opacity:.7}
+#seedCv{width:110px;height:110px;animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+#seedBox b{display:block;font-size:20px}
+@keyframes pop{from{transform:scale(.2) rotate(-20deg)}}
 #win .row{display:flex;gap:8px;justify-content:center}
 #nextBtn{background:#5cb84a;color:#fff;box-shadow:0 3px 0 #3c8a30}
+#hand{position:absolute;left:0;top:0;width:46px;pointer-events:none;z-index:20;transform-origin:18px 4px;filter:drop-shadow(0 4px 3px rgba(0,0,0,.25))}
+#hand[hidden]{display:none}
+#hand canvas{position:absolute;width:40px;height:40px;left:-30px;top:-34px}
+#ghost{position:fixed;left:0;top:0;width:56px;height:56px;pointer-events:none;z-index:30;filter:drop-shadow(0 6px 4px rgba(0,0,0,.25))}
+#ghost[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){#flow.pulse,.card.nudge,#seedCv{animation:none}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <header>
-    <h1>Picky Farm<small id="lvl">Plot 1 of 5</small></h1>
+    <h1>Picky Farm<small id="lvl">Plot 1</small></h1>
     <button class="btn" id="prev" aria-label="Previous plot">‹</button>
     <button class="btn" id="next" aria-label="Next plot">›</button>
     <button class="btn" id="reset">Restart</button>
@@ -69,150 +83,226 @@ footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
   <main class="board" id="board">
     <canvas id="cv"></canvas>
     <div id="toast" class="hide"></div>
-    <div id="win" hidden><div class="panel"><h2 id="winT">Plot harvested!</h2><p id="winP"></p><div class="row"><button class="btn" id="again">Replay</button><button class="btn" id="nextBtn">Next plot</button></div></div></div>
+    <div id="win" hidden><div class="panel"><h2 id="winT">Plot harvested!</h2>
+      <div id="seedBox"><small>New seed</small><canvas id="seedCv"></canvas><b id="seedName"></b></div>
+      <div class="row"><button class="btn" id="again">Replay</button><button class="btn" id="nextBtn">Next plot</button></div></div></div>
   </main>
   <footer>
     <div id="tray"></div>
     <button class="btn" id="flow"><svg viewBox="0 0 24 24"><path d="M12 2C9 7 5 10.5 5 15a7 7 0 0 0 14 0c0-4.5-4-8-7-13z" fill="#fff"/></svg>Let the water flow</button>
   </footer>
+  <div id="hand" hidden><canvas id="handSeed"></canvas><svg viewBox="0 0 48 56"><path d="M18 3c3 0 5 2 5 5v17l2-1v-5c0-3 5-3 5 0v6l2-1v-2c0-3 5-3 5 0v4h1c0-3 5-3 5 0v13c0 9-6 15-15 15h-3c-6 0-10-3-13-8L4 32c-2-3 2-6 5-4l4 4V8c0-3 2-5 5-5z" fill="#fff" stroke="#2b2b2b" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+  <div id="ghost" hidden><canvas id="ghostCv" style="width:56px;height:56px"></canvas></div>
 </div>
 <script>
 {
-const SOIL={loam:{name:'Loam',top:'#7d4f31',side:'#56341f',groove:'#40261a',wet:'#1f120a',speck:'#93623f'},
-            sand:{name:'Sand',top:'#e6c07c',side:'#b48b4b',groove:'#a77d40',wet:'#6e4f22',speck:'#f3d69f'},
-            clay:{name:'Clay',top:'#c96a4b',side:'#8e432c',groove:'#763522',wet:'#45180c',speck:'#da8466'}};
-const PL={carrot:{name:'Carrot',size:2,soil:'sand',acc:'#f07f1e'},
-          basil:{name:'Basil',size:3,soil:'loam',acc:'#55c246'},
-          pumpkin:{name:'Pumpkin',size:4,soil:'clay',acc:'#ffc93a'}};
-const KIND_BY_SIZE={2:'carrot',3:'basil',4:'pumpkin'};
-const LEVELS=[{c:4,r:4,w:1,seed:3,kinds:2},{c:5,r:5,w:1,seed:7,kinds:3},{c:5,r:6,w:2,seed:11,kinds:3},{c:6,r:7,w:2,seed:5,kinds:3},{c:6,r:8,w:3,seed:9,kinds:3}];
-const rotm=m=>((m<<1)|(m>>3))&15;
+const SOIL={loam:{top:'#7d4f31',side:'#56341f',groove:'#40261a',wet:'#1f120a',speck:'#93623f'},
+            sand:{top:'#e6c07c',side:'#b48b4b',groove:'#a77d40',wet:'#6e4f22',speck:'#f3d69f'},
+            clay:{top:'#c96a4b',side:'#8e432c',groove:'#763522',wet:'#45180c',speck:'#da8466'}};
+const PL={radish:{name:'Radish',size:1,soil:'sand',acc:'#e8487f'},carrot:{name:'Carrot',size:2,soil:'sand',acc:'#f07f1e'},
+  lettuce:{name:'Lettuce',size:2,soil:'loam',acc:'#9ad656'},blueberry:{name:'Blueberry',size:3,soil:'loam',acc:'#6f8cff'},
+  corn:{name:'Corn',size:3,soil:'sand',acc:'#ffd21f'},tomato:{name:'Tomato',size:2,soil:'clay',acc:'#ff4b3a'},
+  eggplant:{name:'Eggplant',size:3,soil:'clay',acc:'#b06ae0'},cauliflower:{name:'Cauliflower',size:4,soil:'clay',acc:'#fff1cf'},
+  sunflower:{name:'Sunflower',size:4,soil:'loam',acc:'#ffc41f'},watermelon:{name:'Watermelon',size:5,soil:'sand',acc:'#3fae4a'}};
+// 1-4 hand-designed teaching plots, 5-10 designed by parameters with fixed seeds
+const LEVELS=[
+  {nk:'radish',map:['aWb'],key:{a:'radish',b:'radish'},seed:1,scramble:0,tut:1},
+  {nk:'carrot',map:['aaW','bbr'],key:{a:'carrot',b:'carrot',r:'radish'},seed:2,scramble:0,tut:2},
+  {nk:'lettuce',map:['aaW','bb.'],key:{a:'lettuce',b:'lettuce'},seed:3,scramble:1,tut:3},
+  {nk:'blueberry',map:['aadW','acde','.cfe'],key:{a:'blueberry',c:'lettuce',d:'carrot',e:'carrot',f:'radish'},seed:4,scramble:2},
+  {nk:'corn',c:4,r:4,w:1,pool:['corn','carrot','lettuce','blueberry','radish'],need:2,seed:5,mix:.45},
+  {nk:'tomato',c:5,r:4,w:1,pool:['tomato','corn','blueberry','carrot','lettuce'],need:2,seed:6,mix:.55},
+  {nk:'eggplant',c:5,r:5,w:2,pool:['eggplant','tomato','corn','lettuce','radish'],need:2,seed:7,mix:.65},
+  {nk:'cauliflower',c:5,r:6,w:2,pool:['cauliflower','eggplant','carrot','blueberry','tomato'],need:2,seed:8,mix:.7},
+  {nk:'sunflower',c:6,r:6,w:2,pool:['sunflower','cauliflower','corn','lettuce','tomato'],need:2,seed:9,mix:.8},
+  {nk:'watermelon',c:6,r:7,w:3,pool:['watermelon','sunflower','eggplant','blueberry','carrot'],need:2,seed:10,mix:.9}];
 const DIRS=[[0,-1,1],[1,0,2],[0,1,4],[-1,0,8]],OPP={1:4,2:8,4:1,8:2};
+const rotm=m=>((m<<1)|(m>>3))&15;
 const mulberry=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const shuffle=(arr,rnd)=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=(rnd()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
-const easeBack=t=>{const c1=1.9;return 1+(c1+1)*(t-1)**3+c1*(t-1)**2};
+const easeBack=t=>1+2.9*(t-1)**3+1.9*(t-1)**2;
+const ease=t=>t<.5?2*t*t:1-(-2*t+2)**2/2;
 
-function gen(L){
-  const {c,r,w}=L,N=c*r;
-  const nb=i=>{const x=i%c,y=(i/c)|0,o=[];for(const[dx,dy,b]of DIRS){const nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<c&&ny<r)o.push([ny*c+nx,b])}return o};
-  for(let a=0;a<6000;a++){
-    const rnd=mulberry(L.seed*7919+a),own=new Array(N).fill(-1),pieces=[];
-    let tries=0;
-    while(pieces.length<w&&tries++<300){const i=(rnd()*N)|0;if(own[i]>=0)continue;
-      if(!pieces.every(p=>{const j=p.cells[0];return Math.abs(j%c-i%c)+Math.abs(((j/c)|0)-((i/c)|0))>=3}))continue;
-      own[i]=pieces.length;pieces.push({kind:'water',cells:[i]})}
-    if(pieces.length<w)continue;
-    let ok=true;
-    for(;;){
-      let best=-1,bs=9;
-      for(let i=0;i<N;i++)if(own[i]<0){const f=nb(i).filter(([j])=>own[j]<0).length;if(f<bs||(f===bs&&rnd()<.3)){bs=f;best=i}}
-      if(best<0)break;
-      let placed=false;
-      for(const sz of [...new Set(shuffle([2,3,3,4,4],rnd))]){
-        const cells=[best],set=new Set(cells);
-        while(cells.length<sz){const fr=[];for(const k of cells)for(const[j]of nb(k))if(own[j]<0&&!set.has(j))fr.push(j);if(!fr.length)break;const j=fr[(rnd()*fr.length)|0];cells.push(j);set.add(j)}
-        if(cells.length===sz){const id=pieces.length;cells.forEach(k=>own[k]=id);pieces.push({kind:KIND_BY_SIZE[sz],cells});placed=true;break}
-      }
-      if(!placed){ok=false;break}
-    }
-    if(!ok)continue;
-    if(new Set(pieces.filter(p=>p.kind!=='water').map(p=>p.kind)).size<L.kinds)continue;
-    const soil=new Array(N);
-    pieces.forEach(p=>{if(p.kind!=='water')p.cells.forEach(k=>soil[k]=PL[p.kind].soil)});
-    pieces.forEach(p=>{if(p.kind==='water'){const ns=nb(p.cells[0]).map(([j])=>soil[j]).filter(Boolean);soil[p.cells[0]]=ns[(rnd()*ns.length)|0]}});
-    const holes=new Array(N).fill(0),comp=new Array(N).fill(-1),fr=[];
-    pieces.filter(p=>p.kind==='water').forEach((p,ci)=>{const s=p.cells[0];comp[s]=ci;for(const[j,b]of nb(s))fr.push([s,j,b])});
-    while(fr.length){const[s,t,bit]=fr.splice((rnd()*fr.length)|0,1)[0];if(comp[t]>=0)continue;comp[t]=comp[s];holes[s]|=bit;holes[t]|=OPP[bit];for(const[j,b]of nb(t))if(comp[j]<0)fr.push([t,j,b])}
-    const sizes=new Array(w).fill(0);comp.forEach(k=>sizes[k]++);
-    if(sizes.some(s=>s<4))continue;
-    // scramble: turn each tile a random number of quarter turns; make sure plenty is disconnected
-    const springs=pieces.filter(p=>p.kind==='water').map(p=>p.cells[0]);
-    let mixed;
-    for(let s=0;s<50;s++){mixed=holes.map(m=>{let q=m;for(let n=(rnd()*4)|0;n>0;n--)q=rotm(q);return q});
-      if(reach(mixed,springs,nb,N).filter(isFinite).length<=N*.45)break}
-    const seeds={carrot:0,basil:0,pumpkin:0};pieces.forEach(p=>{if(p.kind!=='water')seeds[p.kind]++});
-    const specks=[...Array(N)].map(()=>[...Array(5)].map(()=>[rnd()*.8+.1,rnd()*.8+.1,rnd()*.04+.02]));
-    return {c,r,w,N,soil,holes:mixed,solved:holes,springs,seeds,specks,nb,pieces};
-  }
-}
 function reach(holes,springs,nb,N){
   const d=new Array(N).fill(Infinity),q=[...springs];springs.forEach(s=>d[s]=0);
   while(q.length){const i=q.shift();for(const[j,b]of nb(i))if(holes[i]&b&&holes[j]&OPP[b]&&d[j]>d[i]+1){d[j]=d[i]+1;q.push(j)}}
   return d;
 }
+function partition(L,c,N,nb,rnd){
+  const own=new Array(N).fill(-1),pieces=[];let tries=0;
+  while(pieces.length<L.w&&tries++<400){const i=(rnd()*N)|0;if(own[i]>=0)continue;
+    if(!pieces.every(p=>{const j=p.cells[0];return Math.abs(j%c-i%c)+Math.abs(((j/c)|0)-((i/c)|0))>=3}))continue;
+    own[i]=pieces.length;pieces.push({kind:'water',cells:[i]})}
+  if(pieces.length<L.w)return null;
+  const wt=k=>k===L.nk?1.8:k==='radish'?.3:1;
+  for(;;){
+    let best=-1,bs=9;
+    for(let i=0;i<N;i++)if(own[i]<0){const f=nb(i).filter(([j])=>own[j]<0).length;if(f<bs||(f===bs&&rnd()<.3)){bs=f;best=i}}
+    if(best<0)break;
+    let placed=false;
+    for(const k of L.pool.map(k=>[k,-Math.log(rnd()+1e-9)/wt(k)]).sort((a,b)=>a[1]-b[1]).map(x=>x[0])){
+      const sz=PL[k].size,cells=[best],set=new Set(cells);
+      while(cells.length<sz){const fr=[];for(const q of cells)for(const[j]of nb(q))if(own[j]<0&&!set.has(j))fr.push(j);if(!fr.length)break;const j=fr[(rnd()*fr.length)|0];cells.push(j);set.add(j)}
+      if(cells.length===sz){cells.forEach(q=>own[q]=pieces.length);pieces.push({kind:k,cells});placed=true;break}
+    }
+    if(!placed)return null;
+  }
+  const cnt=k=>pieces.filter(p=>p.kind===k).length;
+  const np=pieces.length-L.w;
+  if(cnt(L.nk)<L.need||cnt(L.nk)>Math.ceil(np*.4)||cnt('radish')>2)return null;
+  if(new Set(pieces.map(p=>p.kind)).size-1<Math.min(4,L.pool.length-(L.w>1?0:1)))return null;
+  const soils=new Set(pieces.filter(p=>p.kind!=='water').map(p=>PL[p.kind].soil));
+  if(soils.size<new Set(L.pool.map(k=>PL[k].soil)).size)return null;
+  return pieces;
+}
+function gen(L){
+  const c=L.map?L.map[0].length:L.c,r=L.map?L.map.length:L.r,N=c*r,open=new Array(N).fill(true);
+  if(L.map)L.map.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='.')open[y*c+x]=false}));
+  const nb=i=>{const x=i%c,y=(i/c)|0,o=[];for(const[dx,dy,b]of DIRS){const nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<c&&ny<r&&open[ny*c+nx])o.push([ny*c+nx,b])}return o};
+  for(let a=0;a<9000;a++){
+    const rnd=mulberry(L.seed*7919+a);let pieces;
+    if(L.map){const ids={};pieces=[];
+      L.map.forEach((row,y)=>[...row].forEach((ch,x)=>{const i=y*c+x;if(ch==='.')return;if(ch==='W')return pieces.push({kind:'water',cells:[i]});(ids[ch]=ids[ch]||{kind:L.key[ch],cells:[]}).cells.push(i)}));
+      pieces.push(...Object.values(ids))}
+    else if(!(pieces=partition(L,c,N,nb,rnd)))continue;
+    const soil=new Array(N),springs=pieces.filter(p=>p.kind==='water').map(p=>p.cells[0]),plantsSol=pieces.filter(p=>p.kind!=='water');
+    plantsSol.forEach(p=>p.cells.forEach(k=>soil[k]=PL[p.kind].soil));
+    springs.forEach(s=>{const ns=nb(s).map(([j])=>soil[j]).filter(Boolean);soil[s]=ns[(rnd()*ns.length)|0]||'sand'});
+    const holes=new Array(N).fill(0),comp=new Array(N).fill(-1),fr=[];
+    springs.forEach((s,ci)=>{comp[s]=ci;for(const[j,b]of nb(s))fr.push([s,j,b])});
+    while(fr.length){const[s,t,bit]=fr.splice((rnd()*fr.length)|0,1)[0];if(comp[t]>=0)continue;comp[t]=comp[s];holes[s]|=bit;holes[t]|=OPP[bit];for(const[j,b]of nb(t))if(comp[j]<0)fr.push([t,j,b])}
+    if(!L.map){const sizes=springs.map(()=>0);comp.forEach(k=>k>=0&&sizes[k]++);if(sizes.some(s=>s<4))continue}
+    const cand=[...Array(N).keys()].filter(i=>open[i]&&holes[i]&&holes[i]!==15&&!(L.map&&springs.includes(i)));
+    const n=L.map?L.scramble:Math.round(cand.length*L.mix),dryNeed=L.map?(n?1:0):Math.ceil(plantsSol.length*.5);
+    let mixed=holes.slice(),ok=!n;
+    for(let s=0;s<300&&n;s++){mixed=holes.slice();
+      for(const i of shuffle(cand,rnd).slice(0,n)){let q=holes[i];for(let t=1+((rnd()*3)|0);t>0;t--)q=rotm(q);if(q===holes[i])q=rotm(q);mixed[i]=q}
+      const d=reach(mixed,springs,nb,N);
+      if(plantsSol.filter(p=>!p.cells.some(k=>isFinite(d[k]))).length>=dryNeed){ok=true;break}}
+    if(!ok&&!L.map)continue;
+    const seeds={};plantsSol.forEach(p=>seeds[p.kind]=(seeds[p.kind]||0)+1);
+    const specks=[...Array(N)].map(()=>[...Array(5)].map(()=>[rnd()*.8+.1,rnd()*.8+.1,rnd()*.04+.02]));
+    return {c,r,N,open,soil,holes:mixed,solved:holes,solvedDist:reach(holes,springs,nb,N),springs,seeds,specks,nb,pieces};
+  }
+}
 
+/* ---------- sprites (low-poly, drawn at tile centre, s = tile size) ---------- */
+function poly(X,pts,fill){X.beginPath();pts.forEach(([x,y],k)=>k?X.lineTo(x,y):X.moveTo(x,y));X.closePath();X.fillStyle=fill;X.fill()}
+function disc(X,x,y,r,a,b){X.fillStyle=a;X.beginPath();X.arc(x,y,r,0,7);X.fill();if(b){X.fillStyle=b;X.beginPath();X.arc(x,y,r,-1.57,1.57);X.fill()}}
+function oval(X,x,y,rx,ry,rot,f){X.fillStyle=f;X.beginPath();X.ellipse(x,y,rx,ry,rot,0,7);X.fill()}
+function leaf(X,ang,len,w,c1,c2,ox=0,oy=0){const ex=Math.cos(ang)*len,ey=Math.sin(ang)*len,px=Math.cos(ang+1.57)*w,py=Math.sin(ang+1.57)*w;
+  poly(X,[[ox,oy],[ox+px+ex*.5,oy+py+ey*.5],[ox+ex,oy+ey]],c1);poly(X,[[ox,oy],[ox-px+ex*.5,oy-py+ey*.5],[ox+ex,oy+ey]],c2)}
+const SPR={
+  radish(X,s){[-2.1,-1.57,-1.05].forEach((a,n)=>leaf(X,a,s*.3,s*.07,'#3c9a35','#5cbf4a',0,-s*.06));
+    poly(X,[[-s*.035,s*.13],[s*.035,s*.13],[0,s*.25]],'#f6e9ee');disc(X,0,s*.02,s*.15,'#ee5a8f','#c9306a');oval(X,-s*.06,-s*.03,s*.04,s*.025,-.6,'#ffc2d8')},
+  carrot(X,s){poly(X,[[-s*.13,0],[s*.13,0],[s*.07,s*.12],[-s*.07,s*.12]],'#e6781a');poly(X,[[0,0],[s*.13,0],[s*.07,s*.12],[0,s*.12]],'#c9620f');
+    [[-.16,-.32],[0,-.38],[.16,-.32]].forEach(([dx,dy],n)=>poly(X,[[-s*.04,0],[s*.04,0],[s*dx,s*dy]],n%2?'#4fae40':'#3c9a35'))},
+  lettuce(X,s){for(let a=0;a<7;a++){const an=a/7*6.283;oval(X,Math.cos(an)*s*.17,Math.sin(an)*s*.13-s*.02,s*.14,s*.09,an,a%2?'#6fbf3c':'#86d24b')}
+    disc(X,0,-s*.02,s*.12,'#b5e66a','#9fd655');disc(X,-s*.02,-s*.04,s*.06,'#d8f59c')},
+  blueberry(X,s){[-2.6,-.5,2.4,.7].forEach((a,n)=>leaf(X,a,s*.3,s*.08,'#2f7d3a','#3f9a46'));
+    [[-.1,0],[.09,-.05],[.02,.09],[-.04,-.12],[.13,.07]].forEach(([x,y])=>{disc(X,s*x,s*y,s*.075,'#4a64d8','#33479f');disc(X,s*x-s*.02,s*y-s*.025,s*.018,'#b9c6ff')})},
+  corn(X,s){poly(X,[[0,s*.12],[-s*.33,-s*.2],[-s*.04,0]],'#4fae40');poly(X,[[0,s*.12],[s*.33,-s*.16],[s*.04,0]],'#3c9a35');
+    poly(X,[[0,-s*.34],[s*.085,-s*.24],[s*.085,s*.07],[0,s*.13],[-s*.085,s*.07],[-s*.085,-s*.24]],'#ffd84a');poly(X,[[0,-s*.34],[s*.085,-s*.24],[s*.085,s*.07],[0,s*.13]],'#e9b822');
+    for(let y=-.25;y<.07;y+=.07){disc(X,-s*.04,s*y,s*.017,'#fff0a0');disc(X,s*.035,s*y+s*.03,s*.017,'#ffe27a')}
+    poly(X,[[0,s*.15],[-s*.15,-s*.06],[-s*.05,s*.1]],'#79c94e');poly(X,[[0,s*.15],[s*.15,-s*.06],[s*.05,s*.1]],'#5fb24a')},
+  tomato(X,s){disc(X,0,s*.03,s*.18,'#ff4b3a','#d22a1c');oval(X,-s*.07,-s*.04,s*.05,s*.03,-.6,'#ff9a8a');
+    for(let a=0;a<5;a++){const an=a/5*6.283-1.57;poly(X,[[0,-s*.12],[Math.cos(an-.3)*s*.05,-s*.12+Math.sin(an-.3)*s*.05],[Math.cos(an)*s*.12,-s*.12+Math.sin(an)*s*.1]],a%2?'#3c9a35':'#4fae40')}
+    poly(X,[[-s*.015,-s*.12],[s*.015,-s*.12],[s*.02,-s*.2],[-s*.005,-s*.2]],'#3c7a2a')},
+  eggplant(X,s){X.save();X.rotate(-.55);oval(X,0,s*.04,s*.12,s*.21,0,'#5b2a82');oval(X,-s*.02,s*.03,s*.095,s*.19,0,'#8a45bd');oval(X,-s*.05,s*.0,s*.02,s*.1,0,'#c79ae8');
+    poly(X,[[-s*.1,-s*.13],[s*.1,-s*.13],[s*.05,-s*.2],[0,-s*.15],[-s*.05,-s*.2]],'#3f9a35');poly(X,[[-s*.02,-s*.18],[s*.02,-s*.18],[s*.02,-s*.28],[-s*.01,-s*.27]],'#2f7d2a');X.restore()},
+  cauliflower(X,s){for(let a=0;a<6;a++)leaf(X,a/6*6.283+.3,s*.33,s*.11,'#3f8f35','#58ab45');
+    [[0,0,.1],[-.1,-.04,.075],[.1,-.03,.075],[-.06,.08,.075],[.07,.08,.075],[0,-.1,.075],[-.12,.05,.06],[.13,.06,.06]].forEach(([x,y,r])=>{disc(X,s*x,s*y,s*r,'#fbf3df','#e7dcbf');disc(X,s*x-s*r*.3,s*y-s*r*.3,s*r*.35,'#fffaf0')})},
+  sunflower(X,s){leaf(X,2.5,s*.32,s*.08,'#3c9a35','#4fae40');leaf(X,.6,s*.32,s*.08,'#3c9a35','#4fae40');
+    for(let a=0;a<12;a++){const an=a/12*6.283;poly(X,[[Math.cos(an-.26)*s*.1,Math.sin(an-.26)*s*.1-s*.04],[Math.cos(an)*s*.27,Math.sin(an)*s*.27-s*.04],[Math.cos(an+.26)*s*.1,Math.sin(an+.26)*s*.1-s*.04]],a%2?'#f5a90f':'#ffc927')}
+    disc(X,0,-s*.04,s*.11,'#7a4520','#5b3115');for(let a=0;a<6;a++)disc(X,Math.cos(a)*s*.055,-s*.04+Math.sin(a)*s*.055,s*.016,'#a8692f')},
+  watermelon(X,s){leaf(X,-2.3,s*.25,s*.09,'#3c9a35','#4fae40',s*.05,-s*.12);
+    X.save();X.beginPath();X.ellipse(0,s*.03,s*.29,s*.2,-.15,0,7);X.clip();oval(X,0,s*.03,s*.29,s*.2,-.15,'#3a9a44');
+    [-.18,-.06,.06,.18].forEach(x=>oval(X,s*x,s*.03,s*.035,s*.22,-.15,'#1f6a2a'));oval(X,-s*.1,-s*.06,s*.1,s*.04,-.3,'rgba(255,255,255,.22)');X.restore();
+    X.strokeStyle='#3c9a35';X.lineWidth=s*.02;X.beginPath();X.arc(s*.24,-s*.16,s*.05,3,7.5);X.stroke()}
+};
+function drawPlant(X,kind,cx,cy,s,k){
+  X.save();X.translate(cx,cy);X.scale(k,k);
+  X.fillStyle='rgba(0,0,0,.18)';X.beginPath();X.ellipse(0,s*.17,s*.27,s*.09,0,0,7);X.fill();
+  SPR[kind](X,s);X.restore();
+}
+function drawIcon(cv,kind,css){const d=devicePixelRatio||1;cv.width=css*d;cv.height=css*d;const X=cv.getContext('2d');X.setTransform(d,0,0,d,0,0);X.clearRect(0,0,css,css);drawPlant(X,kind,css/2,css*.52,css*1.25,1)}
+
+/* ---------- game state ---------- */
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),board=document.getElementById('board');
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let lvlIdx=0;try{lvlIdx=Math.min(LEVELS.length-1,+localStorage.getItem('pickyLvl')||0)}catch(e){}
-let G,occ,plants,seedLeft,sel,drag,press,state,flowT0,dist,conn,rotT,maxD,flash,shakeUntil,parts,lay={},W=0,H=0,toastTimer,pid=0;
+let lvlIdx=0;try{lvlIdx=Math.min(LEVELS.length-1,+localStorage.getItem('pickyLvl10')||0)}catch(e){}
+let G,L,occ,plants,seedLeft,sel,drag,press,cardPress,state,flowT0,dist,conn,rotT,maxD,flash,shakeUntil,parts,lay={},W=0,H=0,toastTimer,pid=0;
+let cues={damp:false,click:true,sprout:true},hintsLeft=3,hintUntil=0,joints=[],splashed=new Set(),actx,pointerActive=false,lastInput=0,handT0=0,handKind=null,seep=false,blinkT=-1e9;
+try{Object.assign(cues,JSON.parse(localStorage.getItem('pickyCues')||'{}'))}catch(e){}
+const cue=k=>L.tut?k!=='damp':cues[k];
 
 function load(i){
-  lvlIdx=i;try{localStorage.setItem('pickyLvl',i)}catch(e){}
-  G=gen(LEVELS[i]);occ=new Array(G.N).fill(null);G.springs.forEach(s=>occ[s]={type:'water'});
+  lvlIdx=i;L=LEVELS[i];try{localStorage.setItem('pickyLvl10',i)}catch(e){}
+  G=gen(L);occ=new Array(G.N).fill(null);G.springs.forEach(s=>occ[s]={type:'water'});
   plants=[];seedLeft={...G.seeds};rotT=new Array(G.N).fill(-1e9);
-  drag=null;press=null;state='edit';dist=null;flash=null;shakeUntil=0;parts=[];
-  sel=Object.keys(PL).find(k=>seedLeft[k]>0);
+  drag=null;press=null;cardPress=null;state='edit';dist=null;flash=null;shakeUntil=0;parts=[];joints=[];hintUntil=0;
+  sel=L.nk in seedLeft?L.nk:Object.keys(seedLeft)[0];
   $('lvl').textContent=`Plot ${i+1} of ${LEVELS.length}`;$('prev').disabled=i===0;$('next').disabled=i===LEVELS.length-1;
-  $('win').hidden=true;layout();renderTray();updateConn();renderCues();joints=[];hintUntil=0;
-  toast(i===0?'Tap a tile to turn it. Drag to plant':`Plot ${i+1}: ${G.w} springs to connect`,3400);
+  $('cues').hidden=!!L.tut;$('win').hidden=true;handT0=performance.now()+600;
+  layout();renderTray();updateConn();renderCues();
 }
 function updateConn(){conn=reach(G.holes,G.springs,G.nb,G.N)}
 function toast(t,ms=2400){const el=$('toast');el.textContent=t;el.classList.remove('hide');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hide'),ms)}
-
-const ICON={
-  carrot:'<svg viewBox="0 0 40 40"><path d="M20 12l-3-9 3 2 2-4 1 5 4-2-4 8z" fill="#3e9a35"/><path d="M13 13h14l-7 25z" fill="#f08a24"/><path d="M20 13h7l-7 25z" fill="#d46d12"/></svg>',
-  basil:'<svg viewBox="0 0 40 40"><path d="M20 34l-11-9 3-13 8 6z" fill="#3c9a35"/><path d="M20 34l11-9-3-13-8 6z" fill="#5cbf4a"/><path d="M20 22l-6-10 6-9 6 9z" fill="#73d35c"/><path d="M20 22V3l6 9z" fill="#4fae40"/></svg>',
-  pumpkin:'<svg viewBox="0 0 40 40"><path d="M20 10l-12 3-5 10 5 11h24l5-11-5-10z" fill="#f2a03d"/><path d="M20 10l12 3 5 10-5 11H20z" fill="#d97f22"/><path d="M14 12l-2 22M26 12l2 22" stroke="#c46c14" stroke-width="2"/><path d="M19 11l1-7 3 1-2 6z" fill="#6b4a22"/></svg>',
-  water:'<svg viewBox="0 0 40 40"><ellipse cx="20" cy="24" rx="16" ry="11" fill="#2f8fc4"/><ellipse cx="20" cy="22" rx="13" ry="8.5" fill="#55bdf0"/><ellipse cx="16" cy="20" rx="5" ry="2.5" fill="#b9e8ff"/></svg>'};
+const kindsInLevel=()=>Object.keys(PL).filter(k=>G.seeds[k]);
 function renderTray(){
-  const cards=Object.keys(PL).filter(k=>G.seeds[k]>0).map(k=>{const p=PL[k];
-    return `<button class="card" data-k="${k}" aria-pressed="${sel===k}" ${seedLeft[k]?'':'disabled'}>${ICON[k]}<b>${p.name}</b><span class="pips">${'<i></i>'.repeat(p.size).replaceAll('<i>',`<i style="background:${SOIL[p.soil].top}">`)}</span><span class="n">×${seedLeft[k]}</span></button>`});
-  $('tray').style.gridTemplateColumns=`repeat(${cards.length},minmax(0,1fr))`;
-  $('tray').innerHTML=cards.join('');
+  const ks=kindsInLevel();
+  $('tray').style.gridTemplateColumns=`repeat(${ks.length},minmax(0,${ks.length<3?'120px':'1fr'}))`;
+  $('tray').innerHTML=ks.map(k=>{const p=PL[k];
+    return `<button class="card" data-k="${k}" aria-pressed="${sel===k}" ${seedLeft[k]?'':'disabled'}><canvas></canvas><b>${p.name}</b><span class="pips">${`<i style="background:${SOIL[p.soil].top}"></i>`.repeat(p.size)}</span><span class="n">×${seedLeft[k]}</span></button>`}).join('');
+  $('tray').querySelectorAll('.card').forEach(b=>drawIcon(b.querySelector('canvas'),b.dataset.k,40));
   $('flow').disabled=state==='flowing';
 }
-$('tray').addEventListener('click',e=>{const b=e.target.closest('.card');if(!b||b.disabled)return;sel=b.dataset.k;renderTray();
-  const p=PL[sel];toast(`${p.name}: ${p.size} tiles of ${SOIL[p.soil].name.toLowerCase()}, any shape`)});
-
-function layout(){
-  const r=board.getBoundingClientRect(),dpr=devicePixelRatio||1;W=r.width;H=r.height;
-  cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-  if(!G)return;
-  const ts=Math.min(Math.floor((W-36)/G.c),Math.floor((H-60)/G.r),92),dep=Math.round(ts*.13);
-  lay={ts,dep,g:Math.max(2,ts*.035),ox:(W-G.c*ts)/2,oy:(H-G.r*ts)/2+14};
-}
-new ResizeObserver(layout).observe(board);
-
-function cellAt(x,y){const{ts,ox,oy}=lay;const cx=Math.floor((x-ox)/ts),cy=Math.floor((y-oy)/ts);return cx>=0&&cy>=0&&cx<G.c&&cy<G.r?cy*G.c+cx:-1}
-function resetFlow(){if(state!=='edit'){state='edit';dist=null;renderTray()}}
-const adj=(a,b)=>Math.abs(a%G.c-b%G.c)+Math.abs(((a/G.c)|0)-((b/G.c)|0))===1;
-
-let cues={damp:false,click:true,sprout:true},hintsLeft=3,hintUntil=0,joints=[],splashed=new Set(),actx;
-try{Object.assign(cues,JSON.parse(localStorage.getItem('pickyCues')||'{}'))}catch(e){}
 function renderCues(){document.querySelectorAll('.chip[data-c]').forEach(b=>b.setAttribute('aria-pressed',!!cues[b.dataset.c]));$('hint').textContent=`Hint ×${hintsLeft}`}
 $('cues').addEventListener('click',e=>{const b=e.target.closest('.chip[data-c]');if(!b)return;cues[b.dataset.c]=!cues[b.dataset.c];
   try{localStorage.setItem('pickyCues',JSON.stringify(cues))}catch(e){}renderCues();
   toast(Object.values(cues).some(Boolean)?`${b.textContent} ${cues[b.dataset.c]?'on':'off'}`:'No cues: pure puzzle, hints only')});
 $('hint').onclick=()=>{if(state!=='edit'||!$('win').hidden)return;
   if(!hintsLeft)return toast('Out of hints. The shop would open here',2600);
-  hintsLeft--;hintUntil=performance.now()+3000;renderCues();toast('Hint: wet grooves and awake sprouts for 3 s')};
-function blip(f,v=.1,d=.12){if(!cues.click&&f<900)return;try{actx=actx||new AudioContext();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
-function sfx(f,v,d){try{actx=actx||new AudioContext();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+  hintsLeft--;hintUntil=performance.now()+3000;renderCues()};
+
+function sfx(f,v,d,type='sine',to=1.6){try{actx=actx||new AudioContext();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(actx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+
+function layout(){
+  const r=board.getBoundingClientRect(),dpr=devicePixelRatio||1;W=r.width;H=r.height;
+  cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  if(!G)return;
+  const ts=Math.min(Math.floor((W-36)/G.c),Math.floor((H-50)/G.r),G.N<8?104:92),dep=Math.round(ts*.13);
+  lay={ts,dep,g:Math.max(2,ts*.035),ox:(W-G.c*ts)/2,oy:(H-G.r*ts)/2+8};
+}
+new ResizeObserver(layout).observe(board);
+
+function cellAt(x,y){const{ts,ox,oy}=lay;const cx=Math.floor((x-ox)/ts),cy=Math.floor((y-oy)/ts);if(cx<0||cy<0||cx>=G.c||cy>=G.r)return -1;const i=cy*G.c+cx;return G.open[i]?i:-1}
+function resetFlow(){if(state!=='edit'){state='edit';dist=null;renderTray()}}
+const adj=(a,b)=>Math.abs(a%G.c-b%G.c)+Math.abs(((a/G.c)|0)-((b/G.c)|0))===1;
+
 function rotate(i){resetFlow();G.holes[i]=rotm(G.holes[i]);const now=performance.now();rotT[i]=now;updateConn();
-  try{actx=actx||new AudioContext();actx.resume?.()}catch(e){}
-  if(!cues.click)return;let n=0;
-  for(const[j,b]of G.nb(i))if(G.holes[i]&b&&G.holes[j]&OPP[b]){joints.push({i,j,b,t0:now+170});n++}
-  if(n)setTimeout(()=>blip(520+n*120),170)}
+  if(!cue('click'))return sfx(300,.04,.06,'triangle');let n=0;
+  for(const[j,b]of G.nb(i))if(G.holes[i]&b&&G.holes[j]&OPP[b]){joints.push({i,j,t0:now+170});n++}
+  sfx(300,.04,.06,'triangle');if(n)setTimeout(()=>sfx(520+n*120,.1,.12,'triangle'),170)}
 function pullPlant(i){const o=occ[i];if(!o||o.type!=='plant')return false;resetFlow();
   const p=plants.find(q=>q.id===o.id);p.cells.forEach(k=>occ[k]=null);plants=plants.filter(q=>q!==p);seedLeft[p.kind]++;sel=p.kind;
-  toast(`${PL[p.kind].name} back in the tray`);renderTray();navigator.vibrate?.(15);return true}
+  renderTray();navigator.vibrate?.(15);sfx(500,.06,.1);return true}
+function canStart(i,kind){return i>=0&&!occ[i]&&G.soil[i]===PL[kind].soil}
 function extend(i){const p=PL[drag.kind];
   if(i<0||drag.cells.includes(i)||occ[i]||drag.cells.length>=p.size)return;
   if(!drag.cells.some(k=>adj(k,i)))return;
-  if(G.soil[i]!==p.soil){if(!flash||flash.i!==i)flash={i,t:performance.now()};return}
-  drag.cells.push(i)}
+  if(G.soil[i]!==p.soil){if(!flash||flash.i!==i)flash={cells:[i],t:performance.now()};return}
+  drag.cells.push(i);sfx(380+drag.cells.length*60,.05,.06,'triangle')}
+function commitDrag(){
+  if(!drag)return;const p=PL[drag.kind];
+  if(drag.cells.length===p.size){const id=++pid;drag.cells.forEach(k=>occ[k]={type:'plant',id,kind:drag.kind});plants.push({id,kind:drag.kind,cells:drag.cells});seedLeft[drag.kind]--;sfx(440,.08,.15);
+    if(!seedLeft[drag.kind])sel=Object.keys(seedLeft).find(k=>seedLeft[k]>0)||null;renderTray()}
+  else flash={cells:drag.cells.slice(),t:performance.now()};
+  drag=null}
+
+/* board input: tap = rotate, long-press = pull plant, drag from tile = plant */
 cv.addEventListener('pointerdown',e=>{
   if(state==='flowing'||!$('win').hidden)return;
   const i=cellAt(e.offsetX,e.offsetY);if(i<0)return;
@@ -227,95 +317,137 @@ cv.addEventListener('pointermove',e=>{
   press.moved=true;clearTimeout(press.lp);
   const i=press.i;
   if(!sel||!seedLeft[sel]||occ[i]){press.done=true;return}
-  const p=PL[sel];
-  if(G.soil[i]!==p.soil){flash={i,t:performance.now()};press.done=true;return toast(`${p.name} is picky: ${SOIL[p.soil].name.toLowerCase()} only`)}
+  if(!canStart(i,sel)){flash={cells:[i],t:performance.now()};press.done=true;return}
   resetFlow();drag={kind:sel,cells:[i]};extend(j);
 });
-const endDrag=()=>{
+const endBoard=()=>{
   if(press){clearTimeout(press.lp);if(!drag&&!press.moved&&!press.done)rotate(press.i);press=null}
-  if(!drag)return;const p=PL[drag.kind];
-  if(drag.cells.length===p.size){const id=++pid;drag.cells.forEach(k=>occ[k]={type:'plant',id,kind:drag.kind});plants.push({id,kind:drag.kind,cells:drag.cells});seedLeft[drag.kind]--;
-    if(!seedLeft[drag.kind])sel=Object.keys(PL).find(k=>seedLeft[k]>0)||null;renderTray()}
-  else toast(`${p.name} needs ${p.size} tiles in a row or bend`);
-  drag=null};
-cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+  commitDrag()};
+cv.addEventListener('pointerup',endBoard);cv.addEventListener('pointercancel',endBoard);
+
+/* tray input: tap = select, drag a seed card onto the plot = plant */
+$('tray').addEventListener('pointerdown',e=>{
+  const b=e.target.closest('.card');if(!b||b.disabled||state==='flowing'||!$('win').hidden)return;
+  b.setPointerCapture(e.pointerId);cardPress={k:b.dataset.k,x:e.clientX,y:e.clientY,moved:false,el:b};
+});
+$('tray').addEventListener('pointermove',e=>{
+  if(!cardPress)return;
+  if(!cardPress.moved&&Math.hypot(e.clientX-cardPress.x,e.clientY-cardPress.y)<8)return;
+  if(!cardPress.moved){cardPress.moved=true;drawIcon($('ghostCv'),cardPress.k,56);$('ghost').hidden=false;resetFlow()}
+  $('ghost').style.transform=`translate(${e.clientX-28}px,${e.clientY-70}px)`;
+  const r=cv.getBoundingClientRect(),i=cellAt(e.clientX-r.left,e.clientY-r.top);
+  // carrying a seed: planting starts once the finger settles on a tile, so passing over tiles on the way doesn't plant
+  if(!drag){if(i!==cardPress.hover){cardPress.hover=i;cardPress.ht=performance.now();
+      if(i>=0&&!canStart(i,cardPress.k)&&!occ[i])flash={cells:[i],t:performance.now()}}}
+  else extend(i);
+});
+const endCard=()=>{
+  if(!cardPress)return;const cp=cardPress,k=cp.k,moved=cp.moved;cardPress=null;$('ghost').hidden=true;
+  if(!moved){sel=k;renderTray();return}
+  if(!drag&&canStart(cp.hover,k))drag={kind:k,cells:[cp.hover]};
+  if(drag){sel=k;commitDrag()}};
+$('tray').addEventListener('pointerup',endCard);$('tray').addEventListener('pointercancel',endCard);
+addEventListener('pointerdown',()=>{pointerActive=true;try{actx=actx||new AudioContext();actx.resume?.()}catch(e){}},true);
+addEventListener('pointerup',()=>{pointerActive=false;lastInput=performance.now()},true);
 
 $('flow').addEventListener('click',()=>{
+  if(state==='flowing')return;
   dist=reach(G.holes,G.springs,G.nb,G.N);
   maxD=Math.max(0,...dist.filter(isFinite));
   plants.forEach(p=>p.d=Math.min(...p.cells.map(k=>dist[k])));
+  seep=Object.values(seedLeft).some(v=>v);
   const burst=reduce?0:650;state='flowing';flowT0=performance.now()+burst;splashed=new Set();renderTray();
   sfx(180,.18,.5);
   if(!reduce)G.springs.forEach(sp=>{const[x,y]=center(sp);for(let n=0;n<26;n++)parts.push({x,y,vx:(Math.random()-.5)*2.6,vy:-3.5-Math.random()*4,life:1,col:n%3?'#55bdf0':'#c8efff',drop:1})});
 });
 const flowSpeed=reduce?30:9;
+// not every seed planted: water still runs everywhere it can (so the grooves can be checked), sprouts take a sip, then it all soaks away
+function endSeep(){
+  seep=false;state='edit';dist=null;renderTray();
+  $('tray').querySelectorAll('.card:not(:disabled)').forEach(b=>{b.classList.add('nudge');setTimeout(()=>b.classList.remove('nudge'),950)})}
 function finish(){
   state='result';renderTray();
-  const dry=plants.filter(p=>!isFinite(p.d)),left=Object.values(seedLeft).reduce((a,b)=>a+b,0);
-  if(dry.length){shakeUntil=performance.now()+700;toast(`${dry.length} plant${dry.length>1?'s are':' is'} still thirsty. Turn tiles to reach them`,3200)}
-  else if(left)toast(`All watered! ${left} seed${left>1?'s':''} still in the tray`,3000);
+  const dry=plants.filter(p=>!isFinite(p.d)),left=Object.values(seedLeft).some(v=>v);
+  if(dry.length){shakeUntil=performance.now()+800;sfx(160,.1,.3,'triangle')}
+  else if(left){$('tray').querySelectorAll('.card:not(:disabled)').forEach(b=>{b.classList.add('nudge');setTimeout(()=>b.classList.remove('nudge'),950)})}
   else{
     plants.forEach(p=>p.cells.forEach(k=>{const[x,y]=center(k);for(let n=0;n<5;n++)parts.push({x,y,vx:(Math.random()-.5)*2,vy:-2-Math.random()*2.5,life:1,col:PL[p.kind].acc})}));
-    const last=lvlIdx===LEVELS.length-1;
-    $('winT').textContent=last?'Farm complete!':'Plot harvested!';
-    $('winP').textContent=`All ${plants.length} plants are happy and watered.`;
-    $('nextBtn').hidden=last;setTimeout(()=>{$('win').hidden=false;$('nextBtn').focus()},900);
+    const nx=LEVELS[lvlIdx+1];
+    $('winT').textContent=nx?'Plot harvested!':'Farm complete!';
+    $('seedBox').hidden=!nx;$('nextBtn').hidden=!nx;
+    setTimeout(()=>{$('win').hidden=false;if(nx){drawIcon($('seedCv'),nx.nk,110);$('seedName').textContent=PL[nx.nk].name;sfx(660,.1,.25)}$(nx?'nextBtn':'again').focus()},900);
   }
 }
 $('reset').onclick=()=>load(lvlIdx);$('again').onclick=()=>load(lvlIdx);
 $('prev').onclick=()=>load(Math.max(0,lvlIdx-1));$('next').onclick=()=>load(Math.min(LEVELS.length-1,lvlIdx+1));
 $('nextBtn').onclick=()=>load(Math.min(LEVELS.length-1,lvlIdx+1));
 
+/* ---------- text-free tutorial: a ghost hand shows one move ---------- */
+function solPiece(kind){const ps=G.pieces.filter(p=>p.kind===kind);return ps.find(p=>p.cells.every(k=>!occ[k]))||ps[0]}
+function orderCells(cells){const o=[cells[0]],rest=cells.slice(1);while(rest.length){const k=rest.findIndex(x=>o.some(y=>adj(x,y)));o.push(rest.splice(k<0?0:k,1)[0])}return o}
+function appPt(el){const a=$('app').getBoundingClientRect(),r=el.getBoundingClientRect();return[r.left-a.left+r.width/2,r.top-a.top+r.height/2]}
+function cellPt(i){const a=$('app').getBoundingClientRect(),r=cv.getBoundingClientRect(),[x,y]=center(i);return[r.left-a.left+x,r.top-a.top+y]}
+function tutTarget(){
+  if(!L.tut||state!=='edit'||!$('win').hidden)return null;
+  const all=!Object.values(seedLeft).some(v=>v),card=k=>$('tray').querySelector(`.card[data-k="${k}"]`);
+  if(L.tut===1){if(!plants.length)return{kind:'radish',pts:[appPt(card('radish')),cellPt(solPiece('radish').cells[0])]};if(all)return{tap:appPt($('flow'))};return null}
+  if(L.tut===2){if(!plants.some(p=>p.kind==='carrot')){const pc=solPiece('carrot');return{kind:'carrot',pts:[appPt(card('carrot')),...orderCells(pc.cells).map(cellPt)]}}return null}
+  if(L.tut===3&&all&&plants.some(p=>!p.cells.some(k=>isFinite(conn[k])))){
+    let best=-1;for(let i=0;i<G.N;i++)if(G.open[i]&&G.holes[i]!==G.solved[i]&&(best<0||G.solvedDist[i]<G.solvedDist[best]))best=i;
+    if(best>=0)return{tap:cellPt(best)}}
+  return null;
+}
+function drawHand(now){
+  const el=$('hand'),t=tutTarget();
+  if(!t||pointerActive||cardPress||now-lastInput<1300||now<handT0){el.hidden=true;if(!t||pointerActive)handT0=Math.max(handT0,now);return}
+  el.hidden=false;const e=now-handT0;let x,y,sc=1,op=1;
+  const hs=$('handSeed');
+  if(t.tap){const ph=(e%1100)/1100;[x,y]=t.tap;sc=ph<.25?1-ph*.6:ph<.45?.85+(ph-.25)*.75:1;hs.style.display='none'}
+  else{const pts=t.pts,D=pts.length>2?2600:2000,ph=(e%D)/D;
+    if(handKind!==t.kind){drawIcon(hs,t.kind,40);handKind=t.kind}
+    hs.style.display=ph>.12&&ph<.82?'block':'none';
+    if(ph<.15){[x,y]=pts[0];op=ph/.15;sc=1-ph}
+    else if(ph<.8){const u=ease((ph-.15)/.65)*(pts.length-1),k=Math.min(pts.length-2,Math.floor(u)),f=u-k;x=pts[k][0]+(pts[k+1][0]-pts[k][0])*f;y=pts[k][1]+(pts[k+1][1]-pts[k][1])*f;sc=.85}
+    else{[x,y]=pts.at(-1);op=1-(ph-.8)/.2;sc=.85+(ph-.8)*.75}}
+  el.style.transform=`translate(${x-18}px,${y-4}px) scale(${sc})`;el.style.opacity=op;
+}
+
+/* ---------- rendering ---------- */
 function center(i){const{ts,dep,g,ox,oy}=lay;const x=ox+(i%G.c)*ts,y=oy+((i/G.c)|0)*ts,th=ts-dep-2*g;return[x+ts/2,y+g+th/2,x,y,th]}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
-function poly(pts,fill){ctx.beginPath();pts.forEach(([x,y],k)=>k?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=fill;ctx.fill()}
-
-function drawSprout(cx,cy,s,wilt,sh,mood,now){
-  ctx.save();ctx.translate(cx+sh,cy+s*.12);
+function drawSprout(cx,cy,s,wilt,sh,mood,now,drink=0){
+  ctx.save();ctx.translate(cx+sh,cy+s*.12);if(drink)ctx.scale(1+.35*drink,1+.55*drink);
   if(mood==='awake'){ctx.rotate(Math.sin(now/260+cx*.05)*.16);ctx.scale(1.3,1.3+Math.sin(now/180+cy)*.06)}
-  else if(mood==='sleepy'){ctx.rotate(.38);ctx.scale(.85,.8)}
+  else if(mood==='sleepy'){ctx.rotate(.42);ctx.scale(.85,.75)}
   else ctx.rotate(wilt?.5:0);
-  const g=wilt?'#a3903f':'#5cbf4a',g2=wilt?'#8a7633':'#3e9a35';
+  const g=wilt?'#a3903f':mood==='sleepy'?'#8fb04a':'#5cbf4a',g2=wilt?'#8a7633':mood==='sleepy'?'#6f8c38':'#3e9a35';
   ctx.strokeStyle=g2;ctx.lineWidth=s*.04;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-s*.18);ctx.stroke();
-  poly([[0,-s*.16],[-s*.17,-s*.26],[-s*.05,-s*.12]],g);poly([[0,-s*.16],[s*.17,-s*.28],[s*.05,-s*.12]],g2);
+  poly(ctx,[[0,-s*.16],[-s*.17,-s*.26],[-s*.05,-s*.12]],g);poly(ctx,[[0,-s*.16],[s*.17,-s*.28],[s*.05,-s*.12]],g2);
   ctx.restore();
 }
-function drawPlant(kind,cx,cy,s,k){
-  ctx.save();ctx.translate(cx,cy);ctx.scale(k,k);
-  ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(0,s*.16,s*.28,s*.1,0,0,7);ctx.fill();
-  if(kind==='basil'){
-    for(let a=0;a<5;a++){const an=a/5*Math.PI*2-Math.PI/2,ex=Math.cos(an)*s*.3,ey=Math.sin(an)*s*.24,px=Math.cos(an+1.57)*s*.09,py=Math.sin(an+1.57)*s*.07;
-      poly([[0,0],[px+ex*.5,py+ey*.5],[ex,ey]],'#3c9a35');poly([[0,0],[-px+ex*.5,-py+ey*.5],[ex,ey]],'#5cbf4a')}
-    poly([[0,-s*.2],[-s*.09,-s*.02],[0,s*.04]],'#79d862');poly([[0,-s*.2],[s*.09,-s*.02],[0,s*.04]],'#5ab84a');
-  }else if(kind==='carrot'){
-    poly([[-s*.13,0],[s*.13,0],[s*.07,s*.12],[-s*.07,s*.12]],'#e6781a');poly([[0,0],[s*.13,0],[s*.07,s*.12],[0,s*.12]],'#c9620f');
-    [[-.16,-.32],[0,-.38],[.16,-.32]].forEach(([dx,dy],n)=>poly([[-s*.04,0],[s*.04,0],[s*dx,s*dy]],n%2?'#4fae40':'#3c9a35'));
-  }else{
-    const R=s*.27;poly([[-R,-R*.2],[-R*.6,-R*.75],[0,-R*.8],[0,R*.7],[-R*.6,R*.7],[-R,R*.15]],'#f2a03d');
-    poly([[R,-R*.2],[R*.6,-R*.75],[0,-R*.8],[0,R*.7],[R*.6,R*.7],[R,R*.15]],'#d97f22');
-    ctx.strokeStyle='#c46c14';ctx.lineWidth=s*.025;ctx.beginPath();ctx.moveTo(-R*.35,-R*.7);ctx.lineTo(-R*.4,R*.68);ctx.moveTo(R*.35,-R*.7);ctx.lineTo(R*.4,R*.68);ctx.stroke();
-    poly([[-s*.03,-R*.75],[s*.03,-R*.75],[s*.05,-R*1.15],[0,-R*1.1]],'#6b4a22');poly([[s*.04,-R*.8],[s*.26,-R*1.05],[s*.18,-R*.65]],'#4fae40');
-  }
-  ctx.restore();
-}
-
 function frame(now){
   requestAnimationFrame(frame);if(!G||!lay.ts)return;
   ctx.clearRect(0,0,W,H);
   const hinting=now<hintUntil,{ts,dep,g,ox,oy}=lay,tf=state==='flowing'?(now-flowT0)/1000*flowSpeed:state==='result'?1e9:-1;
-  if(state==='flowing'&&tf>maxD+3)finish();
-  // planter box
+  if(state==='flowing'){if(!seep&&tf>maxD+3)finish();else if(seep&&tf>maxD+13)endSeep();
+    if(seep&&tf>maxD+1.5&&!G.soaked){G.soaked=1;sfx(260,.12,.6,'sine',.35)}}
+  if(state!=='flowing')G.soaked=0;
+  if(cardPress&&cardPress.moved&&!drag&&now-cardPress.ht>140&&canStart(cardPress.hover??-1,cardPress.k)){drag={kind:cardPress.k,cells:[cardPress.hover]};sfx(440,.05,.06,'triangle')}
+  const all=!Object.values(seedLeft).some(v=>v);
+  $('flow').classList.toggle('pulse',state==='edit'&&all&&$('win').hidden&&(L.tut!==3||plants.every(p=>p.cells.some(k=>isFinite(conn[k])))));
   const pad=ts*.16;rr(ox-pad,oy-pad+dep,G.c*ts+pad*2,G.r*ts+pad*2,ts*.2);ctx.fillStyle='#7a5430';ctx.fill();
   rr(ox-pad,oy-pad,G.c*ts+pad*2,G.r*ts+pad*2,ts*.2);ctx.fillStyle='#b98550';ctx.fill();
   rr(ox-pad*.45,oy-pad*.45,G.c*ts+pad*.9,G.r*ts+pad*.9,ts*.12);ctx.fillStyle='#3d2817';ctx.fill();
-  const wf=i=>dist&&isFinite(dist[i])?clamp(tf-dist[i]):0;
-  const gw=ts*.17;
-  for(let i=0;i<G.N;i++){
+  const wf=i=>dist&&isFinite(dist[i])?clamp(tf-dist[i]):0,gw=ts*.12;
+  const wa=seep?clamp(1-(tf-maxD-1.5)/6):1,soak=seep?Math.sin(Math.PI*clamp((tf-maxD-1)/11)):0;
+  const dampOn=i=>state==='edit'&&(cue('damp')||hinting)&&isFinite(conn[i]);
+  for(let i=0;i<G.N;i++){if(!G.open[i])continue;
     const[cx,cy,x,y,th]=center(i),S=SOIL[G.soil[i]],tw=ts-2*g;
     rr(x+g,y+g+dep,tw,th,ts*.13);ctx.fillStyle=S.side;ctx.fill();
     rr(x+g,y+g,tw,th,ts*.13);ctx.fillStyle=S.top;ctx.fill();
     ctx.fillStyle=S.speck;G.specks[i].forEach(([a,b,r])=>{ctx.beginPath();ctx.arc(x+g+a*tw,y+g+b*th,r*ts,0,7);ctx.fill()});
-    const ra=-(Math.PI/2)*(1-easeBack(clamp((now-rotT[i])/190))),damp=state==='edit'&&(cues.damp||hinting)&&isFinite(conn[i]),gc=damp?S.wet:S.groove;
+    if(soak>0&&dist&&isFinite(dist[i])){rr(x+g,y+g,tw,th,ts*.13);ctx.fillStyle=`rgba(30,15,5,${.35*soak})`;ctx.fill()}
+    const ra=-(Math.PI/2)*(1-easeBack(clamp((now-rotT[i])/190))),damp=dampOn(i),gc=damp?S.wet:S.groove;
     const ends=DIRS.map(([dx,dy,b])=>G.holes[i]&b?[dx*(tw/2),dy*(th/2)]:null);
     ctx.save();ctx.translate(cx,cy);ctx.rotate(ra);
     ctx.lineCap='round';ctx.strokeStyle=gc;ctx.lineWidth=gw;
@@ -323,50 +455,46 @@ function frame(now){
     if(G.holes[i]){ctx.fillStyle=gc;ctx.beginPath();ctx.arc(0,0,gw*.62,0,7);ctx.fill()}
     if(damp){ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=gw*.16;ends.forEach(e=>{if(e){ctx.beginPath();ctx.moveTo(gw*.12,-gw*.12);ctx.lineTo(e[0]*.85+gw*.12,e[1]*.85-gw*.12);ctx.stroke()}})}
     const f=wf(i);
+    ctx.globalAlpha=wa;
     if(f>0){ctx.strokeStyle='#4fb8ec';ctx.lineWidth=gw*.62;ends.forEach(e=>{if(e){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(e[0]*f,e[1]*f);ctx.stroke()}});
       ctx.fillStyle='#4fb8ec';ctx.beginPath();ctx.arc(0,0,gw*.42,0,7);ctx.fill();
       if(f<1){ctx.fillStyle='#e4f7ff';ends.forEach(e=>{if(e){ctx.beginPath();ctx.arc(e[0]*f,e[1]*f,gw*.36,0,7);ctx.fill()}})}}
-    ctx.restore();
+    ctx.globalAlpha=1;ctx.restore();
   }
-  // aqueduct bridges between connected tiles
   for(let i=0;i<G.N;i++)for(const[j,b]of G.nb(i)){if(j<i||!(G.holes[i]&b&&G.holes[j]&OPP[b])||now-rotT[i]<190||now-rotT[j]<190)continue;
     const[ax,ay]=center(i),[bx,by]=center(j),v=b===4,S=SOIL[G.soil[i]];
     const x1=v?ax:ax+(ts/2-g),y1=v?ay+(ts-dep-2*g)/2:ay,x2=v?bx:bx-(ts/2-g),y2=v?by-(ts-dep-2*g)/2:by;
-    const dmp=state==='edit'&&(cues.damp||hinting)&&isFinite(conn[i]);ctx.strokeStyle=dmp?S.wet:S.groove;ctx.lineWidth=gw;ctx.lineCap='butt';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-    const wet=wf(i)>=1&&wf(j)>0||wf(j)>=1&&wf(i)>0;
-    if(wet){ctx.strokeStyle='#4fb8ec';ctx.lineWidth=gw*.62;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}}
-  // joint clicks
+    ctx.strokeStyle=dampOn(i)?S.wet:S.groove;ctx.lineWidth=gw;ctx.lineCap='butt';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    if(wf(i)>=1&&wf(j)>0||wf(j)>=1&&wf(i)>0){ctx.globalAlpha=wa;ctx.strokeStyle='#4fb8ec';ctx.lineWidth=gw*.62;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.globalAlpha=1}}
   joints=joints.filter(q=>now-q.t0<480);joints.forEach(q=>{const a=(now-q.t0)/480;if(a<0)return;
     const[ax,ay]=center(q.i),[bx,by]=center(q.j),mx=(ax+bx)/2,my=(ay+by)/2;
     ctx.strokeStyle=`rgba(255,246,214,${1-a})`;ctx.lineWidth=3*(1-a)+1;ctx.beginPath();ctx.arc(mx,my,gw*(.5+1.7*easeBack(Math.min(1,a*1.6))),0,7);ctx.stroke();
     ctx.fillStyle=`rgba(255,246,214,${1-a})`;for(let n=0;n<4;n++){const an=n*1.5708+.785,r=gw*(.8+2.4*a);ctx.beginPath();ctx.arc(mx+Math.cos(an)*r,my+Math.sin(an)*r,2.2*(1-a)+.6,0,7);ctx.fill()}});
-  // picky overlay
-  if(drag)for(let i=0;i<G.N;i++)if(G.soil[i]!==PL[drag.kind].soil||occ[i]&&!drag.cells.includes(i)){const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(25,18,8,.38)';ctx.fill()}
-  if(flash&&now-flash.t<450){const[,,x,y,th]=center(flash.i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(230,60,40,${.5*(1-(now-flash.t)/450)})`;ctx.fill()}
-  // springs
-  occ.forEach((o,i)=>{if(!o||o.type!=='water')return;const[cx,cy]=center(i);
+  // picky overlay while planting
+  const dk=drag?drag.kind:cardPress&&cardPress.moved?cardPress.k:null;
+  if(dk)for(let i=0;i<G.N;i++)if(G.open[i]&&(G.soil[i]!==PL[dk].soil||occ[i])){const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(25,18,8,.4)';ctx.fill()}
+  if(flash&&now-flash.t<450)flash.cells.forEach(i=>{const[,,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle=`rgba(230,60,40,${.55*(1-(now-flash.t)/450)})`;ctx.fill()});
+  const burstOn=state==='flowing'&&now<flowT0;
+  G.springs.forEach(i=>{const[cx,cy]=center(i);
     ctx.fillStyle='#8a8f96';ctx.beginPath();ctx.ellipse(cx,cy+ts*.04,ts*.31,ts*.25,0,0,7);ctx.fill();
     ctx.fillStyle='#2f8fc4';ctx.beginPath();ctx.ellipse(cx,cy+ts*.02,ts*.25,ts*.19,0,0,7);ctx.fill();
     ctx.fillStyle='#55bdf0';ctx.beginPath();ctx.ellipse(cx,cy,ts*.21,ts*.15,0,0,7);ctx.fill();
-    const burstOn=state==='flowing'&&now<flowT0,ph=(now/(burstOn?300:1400))%1;ctx.strokeStyle=`rgba(255,255,255,${.7*(1-ph)})`;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cx,cy,ts*.2*ph+2,ts*.14*ph+1.5,0,0,7);ctx.stroke()});
-  // beds + plants
+    const ph=(now/(burstOn?300:1400))%1;ctx.strokeStyle=`rgba(255,255,255,${.7*(1-ph)})`;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cx,cy,ts*.2*ph+2,ts*.14*ph+1.5,0,0,7);ctx.stroke()});
   plants.forEach(p=>{const set=new Set(p.cells);ctx.strokeStyle=PL[p.kind].acc;ctx.lineWidth=Math.max(2.5,ts*.045);ctx.lineCap='round';
-    p.cells.forEach(i=>{const[,,x,y,th]=center(i),inset=g+ts*.05,L=x+inset,T=y+inset,R=x+ts-inset,B=y+g+th-ts*.05+g*0;
-      G.nb(i).length;DIRS.forEach(([dx,dy],d)=>{const nx=i%G.c+dx,ny=((i/G.c)|0)+dy,j=ny*G.c+nx;
-        if(nx>=0&&ny>=0&&nx<G.c&&ny<G.r&&set.has(j))return;ctx.beginPath();
-        if(d===0){ctx.moveTo(L,T);ctx.lineTo(R,T)}else if(d===1){ctx.moveTo(R,T);ctx.lineTo(R,B)}else if(d===2){ctx.moveTo(L,B);ctx.lineTo(R,B)}else{ctx.moveTo(L,T);ctx.lineTo(L,B)}ctx.stroke()})});
+    p.cells.forEach(i=>{const[,,x,y,th]=center(i),inset=g+ts*.05,Lx=x+inset,T=y+inset,R=x+ts-inset,B=y+g+th-ts*.05;
+      DIRS.forEach(([dx,dy],d)=>{const nx=i%G.c+dx,ny=((i/G.c)|0)+dy;if(nx>=0&&ny>=0&&nx<G.c&&ny<G.r&&set.has(ny*G.c+nx))return;ctx.beginPath();
+        if(d===0){ctx.moveTo(Lx,T);ctx.lineTo(R,T)}else if(d===1){ctx.moveTo(R,T);ctx.lineTo(R,B)}else if(d===2){ctx.moveTo(Lx,B);ctx.lineTo(R,B)}else{ctx.moveTo(Lx,T);ctx.lineTo(Lx,B)}ctx.stroke()})});
     const dry=state==='result'&&!isFinite(p.d),sh=dry&&now<shakeUntil?Math.sin(now/30)*ts*.04:0;
-    const mood=state==='edit'&&(cues.sprout||hinting)?(p.cells.some(k=>isFinite(conn[k]))?'awake':'sleepy'):null;
-    if(state==='flowing'&&isFinite(p.d)&&tf>=p.d&&!splashed.has(p.id)){splashed.add(p.id);sfx(420+splashed.size*70,.12,.18);
-      p.cells.forEach(k=>{const[x,y]=center(k);for(let n=0;n<9;n++)parts.push({x,y,vx:(Math.random()-.5)*3,vy:-1.5-Math.random()*2.5,life:.8,col:n%2?'#55bdf0':'#c8efff',drop:1})})}
-    p.cells.forEach(i=>{const[cx,cy]=center(i);const k=isFinite(p.d)&&tf>=p.d?easeBack(clamp((tf-p.d)/1.4)):0;
-      if(k>0)drawPlant(p.kind,cx,cy,ts,Math.max(.15,k));else drawSprout(cx,cy,ts,dry,sh,mood,now)})});
-  // drag preview
-  if(drag){const p=PL[drag.kind];drag.cells.forEach(i=>{const[cx,cy,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();ctx.strokeStyle=p.acc;ctx.lineWidth=3;ctx.stroke();drawSprout(cx,cy,ts,false,0)});
-    const[cx,cy]=center(drag.cells.at(-1)),t=`${drag.cells.length}/${p.size}`;ctx.font=`600 ${Math.max(14,ts*.22)}px Fredoka,sans-serif`;
-    const w=ctx.measureText(t).width+16;rr(cx-w/2,cy-ts*.62,w,ts*.3,10);ctx.fillStyle='#fff8ea';ctx.fill();ctx.fillStyle='#22361a';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,cx,cy-ts*.47)}
-  // particles
-  parts=parts.filter(q=>(q.life-=.012)>0);parts.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.06;ctx.globalAlpha=Math.min(1,q.life*1.4);if(q.drop){ctx.fillStyle=q.col;ctx.beginPath();ctx.arc(q.x,q.y,3.2,0,7);ctx.fill()}else poly([[q.x,q.y-5],[q.x+4,q.y],[q.x,q.y+5],[q.x-4,q.y]],q.col)});ctx.globalAlpha=1;
+    const mood=state==='edit'&&(cue('sprout')||hinting)?(p.cells.some(k=>isFinite(conn[k]))?'awake':'sleepy'):null;
+    if(state==='flowing'&&isFinite(p.d)&&tf>=p.d&&!splashed.has(p.id)){splashed.add(p.id);sfx(seep?520:420+splashed.size*70,seep?.06:.12,.18);
+      p.cells.forEach(k=>{const[x,y]=center(k);for(let n=0;n<(seep?3:7);n++)parts.push({x,y,vx:(Math.random()-.5)*3,vy:-1.5-Math.random()*2.5,life:.8,col:n%2?'#55bdf0':'#c8efff',drop:1})})}
+    p.cells.forEach(i=>{const[cx,cy]=center(i);const k=!seep&&isFinite(p.d)&&tf>=p.d?easeBack(clamp((tf-p.d)/1.4)):0;
+      if(k>0)drawPlant(ctx,p.kind,cx,cy,ts,Math.max(.15,k));else drawSprout(cx,cy,ts,dry,sh,mood,now,seep&&isFinite(p.d)&&tf>=p.d?Math.sin(Math.PI*clamp((tf-p.d)/2.5)):0)})});
+  if(drag){const p=PL[drag.kind];drag.cells.forEach(i=>{const[cx,cy,x,y,th]=center(i);rr(x+g,y+g,ts-2*g,th,ts*.13);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();ctx.strokeStyle=p.acc;ctx.lineWidth=3;ctx.stroke();drawSprout(cx,cy,ts,false,0,null,now)});
+    if(p.size>1){const[cx,cy]=center(drag.cells.at(-1));ctx.fillStyle='#fff8ea';const R=ts*.1;
+      for(let n=0;n<p.size;n++){const x=cx+(n-(p.size-1)/2)*R*2.3,yy=cy-ts*.5;ctx.beginPath();ctx.arc(x,yy,R*.75,0,7);ctx.fillStyle=n<drag.cells.length?p.acc:'rgba(255,248,234,.85)';ctx.fill();ctx.strokeStyle='#22361a';ctx.lineWidth=1.5;ctx.stroke()}}}
+  parts=parts.filter(q=>(q.life-=.012)>0);parts.forEach(q=>{q.x+=q.vx;q.y+=q.vy;q.vy+=.06;ctx.globalAlpha=Math.min(1,q.life*1.4);if(q.drop){ctx.fillStyle=q.col;ctx.beginPath();ctx.arc(q.x,q.y,3.2,0,7);ctx.fill()}else poly(ctx,[[q.x,q.y-5],[q.x+4,q.y],[q.x,q.y+5],[q.x-4,q.y]],q.col)});ctx.globalAlpha=1;
+  drawHand(now);
 }
 load(lvlIdx);requestAnimationFrame(frame);
 }
