@@ -75,6 +75,13 @@ footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
 #ghostDots,#handDots{display:flex;gap:3px;justify-content:center}
 #ghostDots i,#handDots i{width:11px;height:11px;border-radius:50%;background:#fff8ea;border:2px solid #22361a}
 #handDots{position:absolute;left:-40px;top:-50px;width:60px}
+/* intro: loading strip, then the cover */
+#intro{position:absolute;inset:0;z-index:60;background:radial-gradient(120% 75% at 50% 38%,#c4e891,#8fc35a);display:grid;place-items:center;transition:opacity .45s;color:#22361a}
+#intro.out{opacity:0;pointer-events:none}
+#intro[hidden]{display:none}
+#load{display:flex;flex-direction:column;align-items:center;width:100%}
+#load b{font-size:30px;font-weight:700;margin-bottom:18px}
+#loadCv{width:260px;height:78px}
 @media (prefers-reduced-motion:reduce){#flow.pulse,.card.nudge,.card.gulp,#seedCv{animation:none}}
 </style>
 </head>
@@ -99,6 +106,9 @@ footer{padding:6px 12px calc(12px + env(safe-area-inset-bottom))}
     <button class="btn" id="flow"><svg viewBox="0 0 24 24"><path d="M12 2C9 7 5 10.5 5 15a7 7 0 0 0 14 0c0-4.5-4-8-7-13z" fill="#fff"/></svg>Let the water flow</button>
   </footer>
   <div id="hand" hidden><div id="handRing"></div><div id="handDots"></div><canvas id="handSeed"></canvas><svg viewBox="0 0 48 56"><path d="M18 3c3 0 5 2 5 5v17l2-1v-5c0-3 5-3 5 0v6l2-1v-2c0-3 5-3 5 0v4h1c0-3 5-3 5 0v13c0 9-6 15-15 15h-3c-6 0-10-3-13-8L4 32c-2-3 2-6 5-4l4 4V8c0-3 2-5 5-5z" fill="#fff" stroke="#2b2b2b" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+  <div id="intro">
+    <div id="load"><b>Picky Farm</b><canvas id="loadCv"></canvas></div>
+  </div>
   <div id="ghost" hidden><canvas id="ghostCv" style="width:56px;height:56px"></canvas><div id="ghostDots"></div></div>
 </div>
 <script>
@@ -599,6 +609,33 @@ function frame(now){
   drawHand(now);
 }
 load(lvlIdx);requestAnimationFrame(frame);
+
+/* ---------- loading: water runs along four tiles as the loading bar, then straight into the game ---------- */
+function sceneTile(X,x,y,ts,soil,holes,water,now,ph){
+  const S=SOIL[soil],g=Math.max(2,ts*.035),dep=Math.round(ts*.13),tw=ts-2*g,th=ts-dep-2*g,cx=x+ts/2,cy=y+g+th/2,gw=ts*.12;
+  X.fillStyle=S.side;X.beginPath();X.roundRect(x+g,y+g+dep,tw,th,ts*.13);X.fill();
+  X.fillStyle=S.top;X.beginPath();X.roundRect(x+g,y+g,tw,th,ts*.13);X.fill();
+  X.fillStyle=S.speck;[[.25,.3],[.7,.68],[.78,.22]].forEach(([a,b])=>{X.beginPath();X.arc(x+g+a*tw,y+g+b*th,ts*.03,0,7);X.fill()});
+  const ends=DIRS.filter(d=>holes&d[2]).map(([dx,dy])=>[cx+dx*tw/2,cy+dy*th/2]);
+  X.lineCap='round';X.strokeStyle=S.groove;X.lineWidth=gw;ends.forEach(([ex,ey])=>{X.beginPath();X.moveTo(cx,cy);X.lineTo(ex,ey);X.stroke()});
+  if(water>0){X.strokeStyle='#4fb8ec';X.lineWidth=gw*.62;ends.forEach(([ex,ey])=>{X.beginPath();X.moveTo(cx,cy);X.lineTo(cx+(ex-cx)*water,cy+(ey-cy)*water);X.stroke()});
+    if(water>=1&&now!=null){X.fillStyle='rgba(235,250,255,.9)';ends.forEach(([ex,ey])=>{const f=((now/900+ph)%1);X.beginPath();X.arc(cx+(ex-cx)*f,cy+(ey-cy)*f,gw*.18,0,7);X.fill()})}}
+  return[cx,cy]}
+function spring(X,cx,cy,ts,now){X.fillStyle='#8a8f96';X.beginPath();X.ellipse(cx,cy+ts*.04,ts*.31,ts*.25,0,0,7);X.fill();
+  X.fillStyle='#2f8fc4';X.beginPath();X.ellipse(cx,cy+ts*.02,ts*.25,ts*.19,0,0,7);X.fill();X.fillStyle='#55bdf0';X.beginPath();X.ellipse(cx,cy,ts*.21,ts*.15,0,0,7);X.fill();
+  const ph=(now/1400)%1;X.strokeStyle=`rgba(255,255,255,${.7*(1-ph)})`;X.lineWidth=2;X.beginPath();X.ellipse(cx,cy,ts*.2*ph+2,ts*.14*ph+1.5,0,0,7);X.stroke()}
+function fitCanvas(c){const d=devicePixelRatio||1,r=c.getBoundingClientRect();if(c.width!==Math.round(r.width*d)){c.width=Math.round(r.width*d);c.height=Math.round(r.height*d)}const X=c.getContext('2d');X.setTransform(d,0,0,d,0,0);X.clearRect(0,0,r.width,r.height);return[X,r.width,r.height]}
+const introT0=performance.now(),LOAD_MS=reduce?300:1700;let introStage='load';
+function introFrame(now){
+  if(introStage==='gone'||$('intro').hidden){introStage='gone';return}requestAnimationFrame(introFrame);
+  if(introStage==='load'){const[X,w,h]=fitCanvas($('loadCv'));if(w<20)return;const ts=Math.min(h-8,(w-8)/4),ox=(w-ts*4)/2,p=clamp((now-introT0)/(LOAD_MS-350));
+    for(let n=0;n<4;n++){const[cx,cy]=sceneTile(X,ox+n*ts,2,ts,'sand',n===0?2:n===3?8:10,clamp(p*4-n),null,0);
+      if(n===0)spring(X,cx,cy,ts,now);
+      if(n===3&&p>=1){const k=easeBack(clamp((now-introT0-LOAD_MS+350)/300));if(k>0)drawPlant(X,'radish',cx,cy,ts,Math.max(.1,k))}}
+    if(now-introT0>LOAD_MS){introStage='gone';$('intro').classList.add('out');handT0=performance.now()+900;setTimeout(()=>{$('intro').hidden=true},460)}
+    return}}
+requestAnimationFrame(introFrame);
+
 }
 </script>
 </body>
