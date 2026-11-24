@@ -94,26 +94,28 @@ const TEEN_BLAST=66;      // a blue frog's blast radius
 const CAP=25;             // weight that sinks the kayak (gauge = 100%)
 const START_LOAD=.25;     // each stretch starts with eggs/tadpoles aboard up to this share of CAP
 const ITEM_MAX=3;
-const MISS_TIME=1.4;      // a thrown frog that has not merged this long after landing swims back aboard
 const RAINBOW_TIME=2.2;   // rainbow: frogs merge on a near-touch for this long
 const BOMB_R=130;
-const MISS_BUMP=.35;      // ...or this long after bumping into a frog it can't merge with
-const segLen=k=>Math.min(6,3+Math.floor(k/2));   // screens between banks: 3,3,4,4,5,5,6...
+const MISS_BUMP=.35;      // a thrown frog that bumps into a frog it can't merge with swims back aboard this long after (unless it merges first)
+const segLen=k=>Math.min(420,200+k*40);   // metres between banks, longer each stretch
+const ROW_GAP=k=>Math.max(2,3.6-k*.25);   // a new row flows in from under the lily pads this often
+const PACE=(open)=>1.5+8.5*open*open;           // m/s: the more open water ahead, the faster the kayak goes
+const JET_TIME=6;
 // how a stretch plays, harder each time
-const SEG=k=>({rows:Math.min(4,2+Math.floor(k/2)),pile:k<1?[.15,.55,1]:[.08,.4,1],board:Math.max(1.2,2.2-k*.12),
+const SEG=k=>({rows:3,pile:k<1?[.15,.55,1]:[.08,.4,1],board:Math.max(1.2,2.2-k*.12),
   boardTiers:k<1?[.2,.6,1]:[.1,.45,1],blue:.3,red:k<1?0:Math.min(.35,.12+k*.06)});
 const ITEMS={
-  jet:{icon:'🚀',name:'Jet',desc:'Skip this screen'},
+  jet:{icon:'🚀',name:'Jet',desc:'6s full speed, no new rows'},
   bomb:{icon:'💣',name:'Big bomb',desc:'Next throw blows up a third of the swamp'},
   rainbow:{icon:'🌈',name:'Rainbow',desc:'Wakes the swamp: matching frogs merge in a chain'},
   bucket:{icon:'🪣',name:'Bucket',desc:'Dumps the kayak down to 25%'},
 };
 const ITEM_KEYS=Object.keys(ITEMS);
 let seg=0,screen=0,hits=0,coins=0,moveT=0,oldPile=[],newPile=[],shoreT=-1,laneT=0,loseKind='',thrownOnce=false,laneGlow=0,screensDone=0,
-  boatItems=[],nextBomb=false,nextRainbow=false,nets=0,jetNext=false,shop=[],chest=null,piggy=0,piggyShown=0,runBest=0,gaugePulse=0,coinPop=0,leaveT=0,isFirstBank=true,rainbowT=0,poorT=0;
+  boatItems=[],nextBomb=false,nextRainbow=false,nets=0,jetNext=false,shop=[],chest=null,piggy=0,piggyShown=0,runBest=0,gaugePulse=0,coinPop=0,leaveT=0,isFirstBank=true,rainbowT=0,poorT=0,meters=0,segM=0,jetT=0,pace=0;
 try{boatItems=JSON.parse(localStorage.getItem('wadItems')||'[]').filter(k=>ITEMS[k]).slice(0,ITEM_MAX)}catch(e){boatItems=[]}
-try{piggy=+localStorage.getItem('wadPiggy')||0;runBest=+localStorage.getItem('wadBest')||0}catch(e){}
-function saveRun(){try{localStorage.setItem('wadItems',JSON.stringify(boatItems));localStorage.setItem('wadPiggy',piggy);localStorage.setItem('wadBest',runBest)}catch(e){}}
+try{piggy=+localStorage.getItem('wadPiggy')||0;runBest=+localStorage.getItem('wadBestM')||0}catch(e){}
+function saveRun(){try{localStorage.setItem('wadItems',JSON.stringify(boatItems));localStorage.setItem('wadPiggy',piggy);localStorage.setItem('wadBestM',runBest)}catch(e){}}
 
 // ---------- state ----------
 let state='start',overAt=0,nextRow=null,reedWarn=0;
@@ -157,7 +159,7 @@ function startPile(rows){
   let y=TOP;
   for(let k=0;k<rows;k++){let x=0,h=0;const ox=k%2?8:0;
     while(true){let tier,sp,r,cy,n=0;
-      do{tier=k===rows-1||Math.random()<.75?rollTier():Math.floor(Math.random()*4);sp=tier===TEEN?speciesRoll():null;r=TIERS[tier].r;cy=y+r}
+      do{tier=k===rows-1||Math.random()<.92?rollTier():TEEN;sp=tier===TEEN?speciesRoll():null;r=TIERS[tier].r;cy=y+r}
       while(++n<25&&items.some(o=>Math.hypot(o.x-(ox+x+r),o.y-cy)<o.r+r+16&&clash(o.tier,o.sp,tier,sp)));
       if(ox+x+2*r>W)break;items.push(mk(tier,sp,ox+x+r,cy,0,0));x+=2*r+1;h=Math.max(h,2*r)}
     y+=h-4}
@@ -196,14 +198,14 @@ function addRow(first,quiet){
     while(n++<12&&(items.some(o=>Math.hypot(o.x-q.cx,o.y-y)<o.r+q.r+12&&clash(o.tier,o.sp,q.tier,q.sp))||
       fresh.some(o=>Math.abs(o.x-q.cx)<o.r+q.r+3&&clash(o.tier,o.sp,q.tier,q.sp)))){
       q.tier=rollTier();q.sp=q.tier===TEEN?speciesRoll():null;q.r=Math.min(TIERS[q.tier].r,q.r)}
-    const b=mk(q.tier,q.sp,q.cx,smooth?TOP-q.r*.7:y,0,0);if(smooth){b.enter=ENTER;b.ty=y;b.pop=0}fresh.push(b)}
+    const b=mk(q.tier,q.sp,q.cx,smooth?TOP-q.r*.7:y,0,0);b.calm=true;if(smooth){b.enter=ENTER;b.ty=y;b.pop=0}fresh.push(b)}   // new rows never react on their own: only your throws set them off
   items.push(...fresh);
   nextRow=genRow(false);
 }
 function mk(tier,sp,x,y,vx,vy){return{tier,sp,x,y,vx,vy,r:TIERS[tier].r,low:0,born:t,pop:.25,dead:false,wob:Math.random()*6,surf:0}}
 function start(){newRun()}
 // a run starts on the first bank, with the shop open; coins saved in the piggy bank come along
-function newRun(){reset();seg=0;screen=0;hits=0;coins=0;screensDone=0;loseKind='';jumpers=[];escapers=[];nextBomb=nextRainbow=false;nets=0;jetNext=false;
+function newRun(){reset();seg=0;screen=0;hits=0;coins=0;screensDone=0;meters=0;jetT=0;loseKind='';jumpers=[];escapers=[];nextBomb=nextRainbow=false;nets=0;jetNext=false;
   piggyShown=piggy;coins=piggy;piggy=0;saveRun();isFirstBank=true;enterBank(true)}
 function enterBank(first){state='bank';shoreT=1;items=[];attackers=[];chest=first?null:{open:false,t:0,item:ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]};
   const pool=[...ITEM_KEYS].sort(()=>Math.random()-.5);
@@ -216,11 +218,12 @@ function leaveBank(){state='play';shoreT=-1;screen=0;laneT=0;thrownOnce=thrownOn
   startPile(SEG(seg).rows);settlePile();for(const b of items){b.ty=b.y;b.y-=70;b.enter=ENTER;b.pop=0}
   raft=[];let w=0;while(w<CAP*START_LOAD){const tier=Math.random()<.55?0:1;w+=TIERS[tier].w;raft.push({tier,sp:null,px:0,py:0,d:0})}
   raft.forEach((it,k)=>{const[x,y]=slot(k);it.px=x;it.py=y});spawnT=SEG(seg).board;
-  if(jetNext){jetNext=false;setTimeout(()=>{if(state==='play'&&moveT<=0)advance()},700)}}
+  segM=0;nextRow=genRow(false);rowT=rowMax=ROW_GAP(seg)+2;jetT=0;
+  if(jetNext){jetNext=false;jetT=JET_TIME}}
 const inLane=b=>Math.abs(b.x-180)<LANE_W/2+b.r*.4;
 // channel clear -> paddle on; the leftovers drift past, the next screen's frogs come into view (or the bank)
 function advance(){
-  const toBank=screen>=segLen(seg)-1;
+  const toBank=true;
   moveT=MOVE_TIME;oldPile=items.filter(b=>!b.dead);for(const b of oldPile){b.oy=b.y;b.vx=b.vy=0}
   items=[];newPile=[];
   if(!toBank){startPile(SEG(seg).rows);settlePile();newPile=items;for(const b of newPile){b.ty=b.y;b.y=b.ty-MOVE_DIST}}
@@ -240,7 +243,7 @@ function gainItem(k,x,y){burst(x,y,'#ffe27a',14);tone(880,.1,'triangle',.12);set
   if(boatItems.length<ITEM_MAX){boatItems.push(k);saveRun()}else useItem(k,true)}   // no room aboard: it goes off right away
 function useItem(k,overflow){
   tone(660,.08,'square',.06);
-  if(k==='jet'){if(state==='play'&&moveT<=0)advance();else jetNext=true}
+  if(k==='jet'){if(state==='play'&&moveT<=0)jetT=JET_TIME;else jetNext=true}
   else if(k==='bomb')nextBomb=true;
   else if(k==='rainbow'){rainbowT=RAINBOW_TIME;shake=Math.max(shake,.2);
     for(const b of items){b.calm=false;if(b.tier<TEEN&&!b.dead){b.pop=.25;burst(b.x,b.y,['#ff7a7a','#ffd34a','#8fe388','#7ac8ff','#c79bff'][b.tier%5],4)}}
@@ -424,7 +427,7 @@ function saveBest(){newBestCombo=maxCombo>bestComboSaved&&maxCombo>=2;if(newBest
   newBest=dist>best;if(newBest){best=Math.floor(dist);try{localStorage.setItem('frogRaftBest',best)}catch(e){}}}
 function gameOver(kind){state='over';loseKind=kind||'sunk';overAt=performance.now();playTime=t;endT0=t;sadSound();endFx={popped:[]};
   // 10% of the coins drop into the piggy bank for next time; items aboard stay aboard
-  const saved=Math.floor(coins*.1);piggy+=saved;endFx.saved=saved;endFx.newBest=screensDone>runBest;runBest=Math.max(runBest,screensDone);saveRun();
+  const saved=Math.floor(coins*.1);piggy+=saved;endFx.saved=saved;endFx.newBest=Math.floor(meters)>runBest;runBest=Math.max(runBest,Math.floor(meters));saveRun();
   jumpers=raft.map(it=>({x:it.px,y:it.py,tier:it.tier,sp:it.sp,vx:(it.px-180)*2.2+(Math.random()-.5)*80,vy:-220-Math.random()*160,rot:0,spin:(Math.random()-.5)*10}));raft=[]}
 const kOff=()=>0;
 function bez(P,u){const v=1-u;return[v*v*v*P[0][0]+3*v*v*u*P[1][0]+3*v*u*u*P[2][0]+u*u*u*P[3][0],v*v*v*P[0][1]+3*v*v*u*P[1][1]+3*v*u*u*P[2][1]+u*u*u*P[3][1]]}
@@ -488,7 +491,7 @@ cv.addEventListener('pointerdown',e=>{
   if(state==='intro')return;
   if(state==='play'&&tut&&p.x>W-92&&p.y>H-54){endTutorial();return}
   if(state==='bank'){bankTap(p);return}
-  if(state==='over'){if(t-endT0>SUMMARY_AT+.9)newRun();return}
+  if(state==='over'){if(endReady())newRun();return}
   if(state==='play'){const i=itemAt(p);if(i>=0){const k=boatItems.splice(i,1)[0];saveRun();useItem(k);return}}
   cv.setPointerCapture(e.pointerId);
   if(trySwat(p))return;
@@ -513,7 +516,7 @@ const THROW_SPEED=980;
 function fling(x,y,vx,vy){
   cool=.3;thrownOnce=true;
   const it=raft.shift();
-  const b=mk(it.tier,it.sp||null,x,y,vx,vy);b.thrown=true;if(nextBomb){b.bomb=true;nextBomb=false}if(nextRainbow){b.rainbow=true;nextRainbow=false}b.act=1.2;b.miss=MISS_TIME;b.tid=++throwSeq;throws[b.tid]={hit:false,chain:0};b.pop=0;b.stretch=STRETCH;whooshSound();b.spin=clamp(vx/90,-12,12)+(Math.random()-.5)*4;b.rot=0;items.push(b);
+  const b=mk(it.tier,it.sp||null,x,y,vx,vy);b.thrown=true;if(nextBomb){b.bomb=true;nextBomb=false}if(nextRainbow){b.rainbow=true;nextRainbow=false}b.act=1.2;b.tid=++throwSeq;throws[b.tid]={hit:false,chain:0};b.pop=0;b.stretch=STRETCH;whooshSound();b.spin=clamp(vx/90,-12,12)+(Math.random()-.5)*4;b.rot=0;items.push(b);
   burst(x,y+6,'rgba(200,240,255,.8)',6);
 }
 function bankTap(p){
@@ -565,6 +568,11 @@ function breakCombo(){if(combo>=2){tone(220,.22,'sine',.16,.5);
   for(let i=0;i<14;i++){const a=Math.random()*6.28,v=60+Math.random()*120;parts.push({x:30,y:H-52,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:2+Math.random()*2.5,c:combo>=6?'#ff6b9a':combo>=4?'#ffa043':'#ffe27a',life:.5})}}
   combo=0}
 function eat(f,egg){
+  // run: a grown frog in the swamp eats thrown eggs; 3 eggs and it is full and acts (hop away / blow up / come for you)
+  if(state==='play'&&!tut){landed(egg.tid);tone(330,.12,'sine',.28,.6);egg.dead=true;f.gulp=.3;f.mo=0;coins+=1;coinPop=.3;burst(egg.x,egg.y,'rgba(205,232,255,.9)',6);
+    if(f.charge){say(f.x,f.y-f.r-6,'งั่ม! +1','#ffe27a',15);return}
+    f.fat=(f.fat||0)+1;f.r=TIERS[TEEN].r+f.fat*2;f.calm=false;
+    if(f.fat>=3){f.charge=CHARGE;f.vx=f.vy=0;say(f.x,f.y-f.r-8,'อิ่มแล้ว!','#ffd34a',16)}else say(f.x,f.y-f.r-6,'งั่ม! '+f.fat+'/3','#ffe27a',15);return}
   landed(egg.tid||f.tid);tone(330,.12,'sine',.28,.6);
   egg.dead=true;f.fat=(f.fat||0)+1;f.r=TIERS[TEEN].r+f.fat*3;f.gulp=.3;f.mo=0;burst(egg.x,egg.y,'rgba(205,232,255,.9)',6);
   if(f.fat>=3){f.dead=true;dive(TEEN,f.sp,f.x,f.y,true);say(f.x,f.y-f.r-6,'อิ่มแล้ว! ว่ายไปแซงคิว','#ffd34a',15)}
@@ -623,9 +631,8 @@ function update(dt){
   const t0=t-dt;
   if(t0<T_BOARD&&t>=T_BOARD)say(W/2,300,'เรือเริ่มจมได้แล้ว! กบบนเรือเยอะ = จม','#ffe27a',17,2.6);
   if(t0<T_ROWS&&t>=T_ROWS)say(W/2,300,'ใบบัวหุบ = กบแถวใหม่ดันลงมา','#c8ff9e',17,2.6);
-  speed=1+6*diff();
-  scroll+=(18+speed*14)*dt;
-  dist+=speed*dt;
+  speed=1+pace*.55;
+  scroll+=(10+pace*12)*dt;
   if(rainbowT>0){rainbowT-=dt;for(const b of items)b.calm=false}
   spawnT-=dt;gaugePulse=Math.max(0,gaugePulse-dt*3);coinPop=Math.max(0,coinPop-dt);
   if(spawnT<=0){spawnT=SEG(seg).board*(.75+Math.random()*.5);gaugePulse=1;
@@ -655,8 +662,9 @@ function update(dt){
     const tg=b.gulp>0?0:near?1:0;b.mo=(b.mo||0)+(tg-(b.mo||0))*Math.min(1,dt*10)}
   // lily pads open in 3 stages, then a new row pushes in from the top
   calmT-=dt;
-
-  if(rowT<=0){rowT=rowMax=lerp(6,2.5,diff());addRow(false)}
+  // the swamp flows toward the kayak: a new row pushes in from the top every so often (not during a jet)
+  if(jetT>0)jetT-=dt;else if(!tut)rowT-=dt;
+  if(rowT<=0){rowT=rowMax=ROW_GAP(seg);addRow(false)}
 
   items=items.filter(b=>!b.dead);
   const damp=Math.exp(-1.6*dt);
@@ -699,8 +707,8 @@ function update(dt){
         const calm=a.calm&&b.calm;
         if(!calm&&canMerge(a,b)){a.pull=b;b.pull=a;a.pullT=b.pullT=PULL;a.lead2=true;continue}
         if(a.pull===b)continue;
-        if(false&&!calm&&((a.tier===0&&b.tier===TEEN)||(b.tier===0&&a.tier===TEEN))){eat(a.tier===TEEN?a:b,a.tier===0?a:b);if(a.dead)break;continue}
-        if(a.thrown||b.thrown){const f=a.thrown?a:b;f.thrown=false;if(f.miss>0)f.miss=Math.min(f.miss,MISS_BUMP)}   // hit the wrong frog: it gives up quickly
+        if(((a.tier===0&&a.tid&&b.tier===TEEN)||(b.tier===0&&b.tid&&a.tier===TEEN))){eat(a.tier===TEEN?a:b,a.tier===0?a:b);if(a.dead)break;continue}
+        if(a.thrown||b.thrown){const f=a.thrown?a:b,o=f===a?b:a;f.thrown=false;if(f.tid&&!f.bumped&&!o.charge){f.bumped=true;f.miss=MISS_BUMP}}   // hit the wrong frog: it gives up quickly
         if(d<.01){dx=.01;d=.01}
         const nx=dx/d,ny=dy/d,o=(m-d)/2;
         // a frog swimming in from the top pushes the others aside instead of being pushed
@@ -748,11 +756,16 @@ function update(dt){
   else{const d=Math.min(1,load)*FULL_LEVEL-level;level+=Math.sign(d)*Math.min(Math.abs(d),Math.max(8,Math.abs(d)*1.6)*dt)}
   level=Math.max(0,level);
   if(level>=100){level=100;gameOver('sunk');return}
-  // the channel: clear of frogs for a moment -> paddle on
+  // pace: open water ahead = faster; metres to the next bank
+  const open=clamp((SWAMP_BOTTOM-pb)/(SWAMP_BOTTOM-TOP),0,1);
+  pace+=((jetT>0?PACE(1)*1.4:PACE(open))-pace)*Math.min(1,dt*2);
+  meters+=pace*dt;segM+=pace*dt;
+  if(segM>=segLen(seg)&&!items.some(b=>b.thrown||b.pull||b.charge)&&!blasts.length){advance();return}
+  // (old) the channel: clear of frogs for a moment -> paddle on
   const busy=items.some(b=>b.thrown||b.pull||b.charge)||attackers.some(a=>!a.swatted)||leavers.length||blasts.length||escapers.length||rainbowT>0;
   const blocked=items.some(b=>!b.dead&&inLane(b));
   laneGlow+=((blocked?0:1)-laneGlow)*Math.min(1,dt*6);
-  if(!blocked&&!busy){laneT+=dt;if(laneT>.45){laneT=0;advance();return}}else laneT=0;
+
 
   // bubbles popping up along the hull while it's low in the water
   if(vl>.35&&Math.random()<dt*(6+vl*22)){const left=Math.random()<.5,u=.1+Math.random()*.8,[hx,hy]=K(...bez(left?HL:HR,u));
@@ -1059,6 +1072,7 @@ function drawQueue(bob,off){
 function starPath(cx,cy,R){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?R*.5:R;
   i?ctx.lineTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr):ctx.moveTo(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr)}ctx.closePath()}
 function endUpdate(dt){
+  if(state==='over'){const n=coinsLanded(t-endT0);if(n>(endFx.clinks||0)){endFx.clinks=n;tone(1200+n*60,.08,'triangle',.09)}}
   poorT=Math.max(0,poorT-dt);for(const c of shop)if(c.shakeT>0)c.shakeT-=dt;
   if(endFx.hint)endFx.hint.t-=dt;
   for(const p of parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.94;p.vy*=.94;p.life-=dt}parts=parts.filter(p=>p.life>0);
@@ -1095,9 +1109,12 @@ function drawHUD(){
   const txt=(str,x,y,size,c,al)=>{ctx.textAlign=al||'left';ctx.font='400 '+size+'px '+FONT;ctx.lineWidth=4;ctx.strokeStyle='rgba(0,0,0,.5)';ctx.strokeText(str,x,y);ctx.fillStyle=c||'#fff';ctx.fillText(str,x,y)};
   drawCoins();
   // screens left to the next bank: dots, then a little island
-  const n=segLen(seg),x0=W-30-n*15;
-  for(let i=0;i<n;i++){ctx.fillStyle=i<screen?'#ffe27a':i===screen?'rgba(255,255,255,.9)':'rgba(255,255,255,.25)';dot(x0+i*15,26,i===screen?5.5:4.5)}
+  // metres to the next bank: a bar that fills toward the island, total metres under it
+  {const bw=96,bx=W-34-bw,by=22,p=clamp(segM/segLen(seg),0,1);
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.roundRect?ctx.roundRect(bx,by,bw,8,4):ctx.rect(bx,by,bw,8);ctx.fill();
+  ctx.fillStyle=jetT>0?'#9fd8ff':'#ffe27a';ctx.beginPath();ctx.roundRect?ctx.roundRect(bx,by,Math.max(8,bw*p),8,4):ctx.rect(bx,by,bw*p,8);ctx.fill();
   ctx.font='16px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.textAlign='center';ctx.fillText('🏝️',W-16,32);
+  txt(Math.floor(meters)+' m',bx,by-6+0,13,'rgba(255,255,255,.8)')}
   // red hits left
   for(let i=0;i<MAX_HITS;i++){const on=i<MAX_HITS-hits,x=W-58+i*20,y=50;ctx.fillStyle=on?'#ff6b5a':'rgba(255,255,255,.2)';
     ctx.beginPath();ctx.moveTo(x,y+5);ctx.bezierCurveTo(x-9,y-2,x-5,y-9,x,y-4);ctx.bezierCurveTo(x+5,y-9,x+9,y-2,x,y+5);ctx.fill()}
@@ -1142,7 +1159,7 @@ function draw(){
     ell(w.x,w.y,r*.95,r*.75);
     const kick=Math.sin(w.t*12)*r*.15;
     ell(w.x-r*.55,w.y-r*.85+kick,r*.32,r*.14);ell(w.x+r*.55,w.y-r*.85-kick,r*.32,r*.14)}
-  drawShore();drawBank();drawLane();
+  drawShore();drawBank();if(state==='play'&&moveT<=0)drawPads();
   for(const b of items){ctx.globalAlpha=b.fade!=null?Math.max(0,b.fade):1;
     if(b.enter>0){const k=1-b.enter/ENTER;ctx.globalAlpha=Math.min(1,.25+k*1.4);drawCreature(b.x,b.y,b.tier,b.sp,TIERS[b.tier].r,t+b.wob);ctx.globalAlpha=1;continue}
     if(b.surf>0){const k=1-b.surf/.4;
@@ -1216,6 +1233,13 @@ function draw(){
   if(state==='start'||state==='intro')drawTitle();
   if(state==='over'||state==='win')drawEnd();
 }
+// the death screen: up to 10 coins fly one after another into the piggy bank
+const COIN_FLY=.5,COIN_GAP=.13;
+const coinFlyN=()=>Math.min(10,endFx.saved||0);
+const coinLaunch=i=>SUMMARY_AT+.8+i*COIN_GAP;
+const coinLandAt=i=>i<0?-9:coinLaunch(i)+COIN_FLY;
+const coinsLanded=e=>{let n=0;for(let i=0;i<coinFlyN();i++)if(e>=coinLandAt(i))n++;return n};
+const endReady=()=>t-endT0>Math.max(SUMMARY_AT+.9,coinLandAt(coinFlyN()-1)+.2);
 function drawEnd(){
   const e=t-endT0;
   const dim=clamp((e-.3)/(SUMMARY_AT-.3),0,1)*.86;ctx.fillStyle='rgba(6,20,16,'+dim+')';ctx.fillRect(0,0,W,H);
@@ -1224,15 +1248,27 @@ function drawEnd(){
   ctx.font='400 40px '+FONT;ctx.fillStyle='#9fd8e8';ctx.fillText('Sunk!',W/2,120-14*(1-k));
   ctx.font='400 17px '+FONT;ctx.fillStyle='rgba(255,255,255,.75)';ctx.fillText(hits>=MAX_HITS?'The red frogs got you':'Too many frogs aboard',W/2,150);
   ctx.globalAlpha=clamp((e-SUMMARY_AT-.3)/.3,0,1);
-  ctx.font='400 46px '+FONT;ctx.fillStyle='#fff';ctx.fillText(String(screensDone),W/2,232);
-  ctx.font='400 17px '+FONT;ctx.fillStyle='#cfe9ff';ctx.fillText('screens paddled · bank '+seg+' reached',W/2,258);
+  ctx.font='400 46px '+FONT;ctx.fillStyle='#fff';ctx.fillText(Math.floor(meters)+' m',W/2,232);
+  ctx.font='400 17px '+FONT;ctx.fillStyle='#cfe9ff';ctx.fillText('paddled · bank '+seg+' reached',W/2,258);
   ctx.fillStyle=endFx.newBest?'#ffa043':'#cfe9ff';ctx.fillText(endFx.newBest?'New best!':'Best '+runBest,W/2,284);
-  ctx.font='40px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.fillText('🐷',W/2-60,352);
-  ctx.font='400 18px '+FONT;ctx.fillStyle='#ffe27a';ctx.textAlign='left';ctx.fillText('+'+(endFx.saved||0)+' coins saved',W/2-30,350);ctx.textAlign='center';
-  if(boatItems.length){ctx.font='400 15px '+FONT;ctx.fillStyle='rgba(255,255,255,.75)';ctx.fillText('Still aboard for next time:',W/2,396);
-    ctx.font='26px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.fillText(boatItems.map(k=>ITEMS[k].icon).join('  '),W/2,430)}
+  // coins: this run's pile on the left, 10% of it flies into the piggy bank on the right
+  const sv=endFx.saved||0,nf=coinFlyN(),landedN=coinsLanded(e),shown=nf?Math.round(sv*landedN/nf):0;
+  const CX=W/2-70,CY=344,PX=W/2+62,PY=346;
+  coinIcon(CX-18,CY-6,11);ctx.font='400 24px '+FONT;ctx.fillStyle='#ffe27a';ctx.textAlign='left';ctx.fillText(String(coins),CX-2,CY+2);ctx.textAlign='center';
+  ctx.font='400 13px '+FONT;ctx.fillStyle='rgba(255,255,255,.6)';ctx.fillText('this run',CX,CY+24);
+  // the piggy bank hops a little each time a coin drops in
+  const since=e-coinLandAt(landedN-1),hop=landedN>0&&since<.18?Math.sin(since/.18*Math.PI)*.18:0;
+  ctx.save();ctx.translate(PX,PY);ctx.scale(1+hop,1-hop*.6);ctx.font='48px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.fillText('🐷',0,14);ctx.restore();
+  // its '10%' tag
+  ctx.save();ctx.translate(PX+30,PY-22);ctx.rotate(.18);ctx.fillStyle='#ffe27a';ctx.beginPath();ctx.roundRect?ctx.roundRect(-20,-11,40,22,6):ctx.rect(-20,-11,40,22);ctx.fill();
+  ctx.fillStyle='#3b2a22';ctx.font='400 15px '+FONT;ctx.fillText('10%',0,5);ctx.restore();
+  ctx.font='400 17px '+FONT;ctx.fillStyle='#ffe27a';ctx.fillText('+'+shown+' saved',PX,PY+44);
+  for(let i=0;i<nf;i++){const t0=coinLaunch(i),p=(e-t0)/COIN_FLY;if(p<0||p>=1)continue;const q=p*p*(3-2*p);
+    coinIcon(CX-18+(PX-(CX-18))*q,CY-6+(PY-6-(CY-6))*q-Math.sin(p*Math.PI)*34,8)}
+  if(boatItems.length){ctx.font='400 15px '+FONT;ctx.fillStyle='rgba(255,255,255,.75)';ctx.fillText('Still aboard for next time:',W/2,428);
+    ctx.font='26px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.fillText(boatItems.map(k=>ITEMS[k].icon).join('  '),W/2,462)}
   ctx.globalAlpha=1;
-  if(e>SUMMARY_AT+.9){ctx.font='400 19px '+FONT;ctx.fillStyle='#ffe27a';ctx.globalAlpha=.6+Math.sin(performance.now()/300)*.4;ctx.fillText('Tap to paddle again',W/2,H-60);ctx.globalAlpha=1}
+  if(endReady()){ctx.font='400 19px '+FONT;ctx.fillStyle='#ffe27a';ctx.globalAlpha=.6+Math.sin(performance.now()/300)*.4;ctx.fillText('Tap to paddle again',W/2,H-60);ctx.globalAlpha=1}
 }
 
 startScene();

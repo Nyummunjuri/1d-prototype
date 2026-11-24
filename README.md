@@ -2,7 +2,7 @@
 
 Small playable game prototypes, one folder per game. Each game is a single self-contained `index.html`.
 
-- `wad-da-frog-v3/` — Wad da Frog endless roguelike run: banks, shop, items, weight gauge
+- `wad-da-frog-v3/` — Wad da Frog endless roguelike run: flowing swamp, banks, shop, items, weight gauge
 - `picky-farm/` — turn soil tiles to connect water grooves, plant picky crops on matching soil
 - `wad-da-frog-attack/` — flick frogs off a sinking raft; matching frogs merge
 - `wad-da-frog/` — swipe frogs from a kayak into the swamp, upside-down Suika merge
