@@ -26,9 +26,9 @@ const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const FONT='Fredoka, system-ui, sans-serif';
 let PX=1;const spriteCache=new Map();
 // ---------- v.4 art: painted sprites loaded from assets/ (the old vector drawing stays as a fallback) ----------
-const ASSET_SRC={"frog_egg": "assets/frogs/frog_egg.png", "frog_tadpole": "assets/frogs/frog_tadpole.png", "frog_tadpole_sleep": "assets/frogs/frog_tadpole_sleep.png", "frog_green_teen": "assets/frogs/frog_green_teen.png", "frog_green_teen_sleep": "assets/frogs/frog_green_teen_sleep.png", "frog_green_adult": "assets/frogs/frog_green_adult.png", "frog_red_teen": "assets/frogs/frog_red_teen.png", "frog_red_teen_sleep": "assets/frogs/frog_red_teen_sleep.png", "frog_red_adult": "assets/frogs/frog_red_adult.png", "frog_purple_legs": "assets/frogs/frog_purple_legs.png", "frog_purple_legs_sleep": "assets/frogs/frog_purple_legs_sleep.png", "frog_purple_teen": "assets/frogs/frog_purple_teen.png", "frog_purple_teen_sleep": "assets/frogs/frog_purple_teen_sleep.png", "frog_purple_adult": "assets/frogs/frog_purple_adult.png", "frog_orange_legs": "assets/frogs/frog_orange_legs.png", "frog_orange_legs_sleep": "assets/frogs/frog_orange_legs_sleep.png", "frog_orange_teen": "assets/frogs/frog_orange_teen.png", "frog_orange_teen_sleep": "assets/frogs/frog_orange_teen_sleep.png", "frog_orange_adult": "assets/frogs/frog_orange_adult.png", "frog_blue_legs": "assets/frogs/frog_blue_legs.png", "frog_blue_legs_sleep": "assets/frogs/frog_blue_legs_sleep.png", "frog_blue_tiny": "assets/frogs/frog_blue_tiny.png", "frog_blue_tiny_sleep": "assets/frogs/frog_blue_tiny_sleep.png", "frog_blue_teen": "assets/frogs/frog_blue_teen.png", "frog_blue_teen_sleep": "assets/frogs/frog_blue_teen_sleep.png", "frog_blue_adult": "assets/frogs/frog_blue_adult.png", "frog_yellow_legs": "assets/frogs/frog_yellow_legs.png", "frog_yellow_legs_sleep": "assets/frogs/frog_yellow_legs_sleep.png", "frog_yellow_tiny": "assets/frogs/frog_yellow_tiny.png", "frog_yellow_tiny_sleep": "assets/frogs/frog_yellow_tiny_sleep.png", "frog_yellow_teen": "assets/frogs/frog_yellow_teen.png", "frog_yellow_teen_sleep": "assets/frogs/frog_yellow_teen_sleep.png", "frog_yellow_grown": "assets/frogs/frog_yellow_grown.png", "frog_yellow_grown_sleep": "assets/frogs/frog_yellow_grown_sleep.png", "frog_yellow_adult": "assets/frogs/frog_yellow_adult.png", "kayak": "assets/scene/kayak.png", "kayak_crack_1": "assets/scene/kayak_crack_1.png", "kayak_crack_2": "assets/scene/kayak_crack_2.png", "kayak_crack_3": "assets/scene/kayak_crack_3.png", "bg_swamp": "assets/scene/bg_swamp.jpg", "swamp_leaf": "assets/scene/swamp_leaf.png", "lilypad": "assets/scene/lilypad.png", "lilypad_stem": "assets/scene/lilypad_stem.png", "btn_tutorial": "assets/ui/btn_tutorial.png", "icon_coin": "assets/ui/icon_coin.png", "tutorial_hand": "assets/ui/tutorial_hand.png", "load_icon_happy": "assets/ui/load_icon_happy.png", "load_icon_hmm": "assets/ui/load_icon_hmm.png", "load_icon_worried": "assets/ui/load_icon_worried.png", "load_icon_panic": "assets/ui/load_icon_panic.png", "item_rainbow": "assets/ui/item_rainbow.png", "item_bucket": "assets/ui/item_bucket.png", "item_net": "assets/ui/item_net.png", "mission_poster": "assets/ui/mission_poster.png", "card_newfrog": "assets/ui/card_newfrog.png", "btn_continue_ad": "assets/ui/btn_continue_ad.png", "mission_pad": "assets/ui/mission_pad.png", "piggy_bank": "assets/ui/piggy_bank.png", "tag_10pct": "assets/ui/tag_10pct.png", "logo": "assets/ui/logo.png", "cover": "assets/ui/cover.jpg", "banner_panel": "assets/ui/banner_panel.png", "lotus_bud": "assets/scene/lotus_bud.png", "lotus_half": "assets/scene/lotus_half.png", "lotus_full": "assets/scene/lotus_full.png", "deco_lotus_1": "assets/deco/deco_lotus_1.png", "deco_lotus_2": "assets/deco/deco_lotus_2.png", "deco_lotus_3": "assets/deco/deco_lotus_3.png", "deco_lotus_5": "assets/deco/deco_lotus_5.png", "deco_lotus_6": "assets/deco/deco_lotus_6.png", "frog_green_teen_eat": "assets/frogs/frog_green_teen_eat.png", "frog_red_teen_eat": "assets/frogs/frog_red_teen_eat.png", "frog_purple_teen_eat": "assets/frogs/frog_purple_teen_eat.png", "frog_orange_teen_eat": "assets/frogs/frog_orange_teen_eat.png", "frog_blue_teen_eat": "assets/frogs/frog_blue_teen_eat.png", "frog_yellow_teen_eat": "assets/frogs/frog_yellow_teen_eat.png", "frog_blue_tiny_eat": "assets/frogs/frog_blue_tiny_eat.png", "frog_yellow_tiny_eat": "assets/frogs/frog_yellow_tiny_eat.png", "frog_yellow_grown_eat": "assets/frogs/frog_yellow_grown_eat.png", "shop_card": "assets/ui/shop_card.png", "shop_awning": "assets/ui/shop_awning.png"};
-const RECT={"frog_egg": [-10.5, -10.5, 21, 21], "frog_tadpole": [-13.12, -13.12, 27.75, 26.25], "frog_tadpole_sleep": [-13.12, -13.12, 27.75, 26.25], "frog_green_teen": [-24.15, -19.4, 48.5, 43.5], "frog_green_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_green_adult": [-36.1, -40, 72.25, 74.75], "frog_red_teen": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_red_adult": [-36.1, -44.75, 72.25, 79.5], "frog_purple_legs": [-16.28, -16.28, 34.25, 32.75], "frog_purple_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_purple_teen": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_purple_adult": [-36.1, -51, 72.25, 85.75], "frog_orange_legs": [-16.28, -16.28, 34.25, 32.75], "frog_orange_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_orange_teen": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_orange_adult": [-36.1, -28.75, 72.25, 63.5], "frog_blue_legs": [-16.28, -16.28, 34.25, 32.75], "frog_blue_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_blue_tiny": [-19.95, -16.45, 40, 36.5], "frog_blue_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_blue_teen": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_blue_adult": [-36.1, -51, 72.25, 85.75], "frog_yellow_legs": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_tiny": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_yellow_teen": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_grown": [-29.4, -23.15, 59, 52], "frog_yellow_grown_sleep": [-29.4, -23.15, 59, 52], "frog_yellow_adult": [-36.1, -40.5, 72.25, 75.25], "kayak": [44.33, 512.33, 271.33, 233.67], "kayak_crack_1": [104.33, 603.33, 34.33, 70.67], "kayak_crack_2": [226.67, 614.33, 34.33, 56.67], "kayak_crack_3": [161, 546.67, 35.67, 51.67], "bg_swamp": [0, 0, 360, 640], "swamp_leaf": [4, 3, 22, 14], "lilypad": [8.25, 5, 89.25, 43], "lilypad_stem": [8.5, 5, 76.25, 62.25], "btn_tutorial": [3, 3, 45, 47], "icon_coin": [4, 4, 22, 23], "tutorial_hand": [13, 2.5, 37, 48.75], "load_icon_happy": [3, 7.6, 44, 25.4], "load_icon_hmm": [3, 7.6, 44, 25.4], "load_icon_worried": [3, 7.6, 44, 25.4], "load_icon_panic": [3, 7.6, 44, 25.4], "item_rainbow": [1.13, 0.0, 31.73, 34], "item_bucket": [0.35, 0.0, 33.29, 34], "item_net": [0.0, 4.04, 34, 25.93], "mission_poster": [7, 4.4, 57.4, 68.2], "card_newfrog": [8, 4, 248, 312], "btn_continue_ad": [4, 4, 112, 112], "mission_pad": [2, 2, 52, 36], "piggy_bank": [6.5, 11, 67, 59.5], "tag_10pct": [2.75, 4, 45, 26], "frog_green_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_grown_eat": [-29.4, -23.15, 59, 52]};   // where each sprite sits, in game units, relative to the point the old code drew from
-const DECO=[["deco_lotus_1", 298.8, 177.1, 61.2, 55.1], ["deco_lotus_2", 0.0, 161.4, 78.4, 141.6], ["deco_lotus_3", 317.5, 283.5, 42.5, 62.0], ["deco_lotus_5", 0.0, 577.7, 67.3, 52.0], ["deco_lotus_6", 277.0, 459.1, 83.0, 153.8]];   // scene decorations around the edges (above the water, under the frogs)
+const ASSET_SRC={"frog_egg": "assets/frogs/frog_egg.png", "frog_tadpole": "assets/frogs/frog_tadpole.png", "frog_tadpole_sleep": "assets/frogs/frog_tadpole_sleep.png", "frog_green_teen": "assets/frogs/frog_green_teen.png", "frog_green_teen_sleep": "assets/frogs/frog_green_teen_sleep.png", "frog_green_adult": "assets/frogs/frog_green_adult.png", "frog_red_teen": "assets/frogs/frog_red_teen.png", "frog_red_teen_sleep": "assets/frogs/frog_red_teen_sleep.png", "frog_red_adult": "assets/frogs/frog_red_adult.png", "frog_purple_legs": "assets/frogs/frog_purple_legs.png", "frog_purple_legs_sleep": "assets/frogs/frog_purple_legs_sleep.png", "frog_purple_teen": "assets/frogs/frog_purple_teen.png", "frog_purple_teen_sleep": "assets/frogs/frog_purple_teen_sleep.png", "frog_purple_adult": "assets/frogs/frog_purple_adult.png", "frog_orange_legs": "assets/frogs/frog_orange_legs.png", "frog_orange_legs_sleep": "assets/frogs/frog_orange_legs_sleep.png", "frog_orange_teen": "assets/frogs/frog_orange_teen.png", "frog_orange_teen_sleep": "assets/frogs/frog_orange_teen_sleep.png", "frog_orange_adult": "assets/frogs/frog_orange_adult.png", "frog_blue_legs": "assets/frogs/frog_blue_legs.png", "frog_blue_legs_sleep": "assets/frogs/frog_blue_legs_sleep.png", "frog_blue_tiny": "assets/frogs/frog_blue_tiny.png", "frog_blue_tiny_sleep": "assets/frogs/frog_blue_tiny_sleep.png", "frog_blue_teen": "assets/frogs/frog_blue_teen.png", "frog_blue_teen_sleep": "assets/frogs/frog_blue_teen_sleep.png", "frog_blue_adult": "assets/frogs/frog_blue_adult.png", "frog_yellow_legs": "assets/frogs/frog_yellow_legs.png", "frog_yellow_legs_sleep": "assets/frogs/frog_yellow_legs_sleep.png", "frog_yellow_tiny": "assets/frogs/frog_yellow_tiny.png", "frog_yellow_tiny_sleep": "assets/frogs/frog_yellow_tiny_sleep.png", "frog_yellow_teen": "assets/frogs/frog_yellow_teen.png", "frog_yellow_teen_sleep": "assets/frogs/frog_yellow_teen_sleep.png", "frog_yellow_grown": "assets/frogs/frog_yellow_grown.png", "frog_yellow_grown_sleep": "assets/frogs/frog_yellow_grown_sleep.png", "frog_yellow_adult": "assets/frogs/frog_yellow_adult.png", "kayak": "assets/scene/kayak.png", "kayak_crack_1": "assets/scene/kayak_crack_1.png", "kayak_crack_2": "assets/scene/kayak_crack_2.png", "kayak_crack_3": "assets/scene/kayak_crack_3.png", "bg_swamp": "assets/scene/bg_swamp.jpg", "swamp_leaf": "assets/scene/swamp_leaf.png", "lilypad": "assets/scene/lilypad.png", "lilypad_stem": "assets/scene/lilypad_stem.png", "btn_tutorial": "assets/ui/btn_tutorial.png", "icon_coin": "assets/ui/icon_coin.png", "tutorial_hand": "assets/ui/tutorial_hand.png", "load_icon_happy": "assets/ui/load_icon_happy.png", "load_icon_hmm": "assets/ui/load_icon_hmm.png", "load_icon_worried": "assets/ui/load_icon_worried.png", "load_icon_panic": "assets/ui/load_icon_panic.png", "item_rainbow": "assets/ui/item_rainbow.png", "item_bucket": "assets/ui/item_bucket.png", "item_net": "assets/ui/item_net.png", "mission_poster": "assets/ui/mission_poster.png", "card_newfrog": "assets/ui/card_newfrog.png", "btn_continue_ad": "assets/ui/btn_continue_ad.png", "mission_pad": "assets/ui/mission_pad.png", "piggy_bank": "assets/ui/piggy_bank.png", "tag_10pct": "assets/ui/tag_10pct.png", "logo": "assets/ui/logo.png", "cover": "assets/ui/cover.jpg", "banner_panel": "assets/ui/banner_panel.png", "lotus_bud": "assets/scene/lotus_bud.png", "lotus_half": "assets/scene/lotus_half.png", "lotus_full": "assets/scene/lotus_full.png", "deco_lotus_2": "assets/deco/deco_lotus_2.png", "deco_lotus_3": "assets/deco/deco_lotus_3.png", "deco_lotus_5": "assets/deco/deco_lotus_5.png", "deco_lotus_6": "assets/deco/deco_lotus_6.png", "frog_green_teen_eat": "assets/frogs/frog_green_teen_eat.png", "frog_red_teen_eat": "assets/frogs/frog_red_teen_eat.png", "frog_purple_teen_eat": "assets/frogs/frog_purple_teen_eat.png", "frog_orange_teen_eat": "assets/frogs/frog_orange_teen_eat.png", "frog_blue_teen_eat": "assets/frogs/frog_blue_teen_eat.png", "frog_yellow_teen_eat": "assets/frogs/frog_yellow_teen_eat.png", "frog_blue_tiny_eat": "assets/frogs/frog_blue_tiny_eat.png", "frog_yellow_tiny_eat": "assets/frogs/frog_yellow_tiny_eat.png", "frog_yellow_grown_eat": "assets/frogs/frog_yellow_grown_eat.png", "shop_card": "assets/ui/shop_card.png", "shop_awning": "assets/ui/shop_awning.png", "item_clover": "assets/ui/item_clover.png"};
+const RECT={"frog_egg": [-10.5, -10.5, 21, 21], "frog_tadpole": [-13.12, -13.12, 27.75, 26.25], "frog_tadpole_sleep": [-13.12, -13.12, 27.75, 26.25], "frog_green_teen": [-24.15, -19.4, 48.5, 43.5], "frog_green_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_green_adult": [-36.1, -40, 72.25, 74.75], "frog_red_teen": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_red_adult": [-36.1, -44.75, 72.25, 79.5], "frog_purple_legs": [-16.28, -16.28, 34.25, 32.75], "frog_purple_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_purple_teen": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_purple_adult": [-36.1, -51, 72.25, 85.75], "frog_orange_legs": [-16.28, -16.28, 34.25, 32.75], "frog_orange_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_orange_teen": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_orange_adult": [-36.1, -28.75, 72.25, 63.5], "frog_blue_legs": [-16.28, -16.28, 34.25, 32.75], "frog_blue_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_blue_tiny": [-19.95, -16.45, 40, 36.5], "frog_blue_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_blue_teen": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_blue_adult": [-36.1, -51, 72.25, 85.75], "frog_yellow_legs": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_tiny": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_yellow_teen": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_grown": [-29.4, -23.15, 59, 52], "frog_yellow_grown_sleep": [-29.4, -23.15, 59, 52], "frog_yellow_adult": [-36.1, -40.5, 72.25, 75.25], "kayak": [44.33, 512.33, 271.33, 233.67], "kayak_crack_1": [104.33, 603.33, 34.33, 70.67], "kayak_crack_2": [226.67, 614.33, 34.33, 56.67], "kayak_crack_3": [161, 546.67, 35.67, 51.67], "bg_swamp": [0, 0, 360, 640], "swamp_leaf": [4, 3, 22, 14], "lilypad": [8.25, 5, 89.25, 43], "lilypad_stem": [8.5, 5, 76.25, 62.25], "btn_tutorial": [3, 3, 45, 47], "icon_coin": [4, 4, 22, 23], "tutorial_hand": [13, 2.5, 37, 48.75], "load_icon_happy": [3, 7.6, 44, 25.4], "load_icon_hmm": [3, 7.6, 44, 25.4], "load_icon_worried": [3, 7.6, 44, 25.4], "load_icon_panic": [3, 7.6, 44, 25.4], "item_rainbow": [1.13, 0.0, 31.73, 34], "item_bucket": [0.35, 0.0, 33.29, 34], "item_net": [0.0, 4.04, 34, 25.93], "mission_poster": [7, 4.4, 57.4, 68.2], "card_newfrog": [8, 4, 248, 312], "btn_continue_ad": [4, 4, 112, 112], "mission_pad": [2, 2, 52, 36], "piggy_bank": [6.5, 11, 67, 59.5], "tag_10pct": [2.75, 4, 45, 26], "frog_green_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_grown_eat": [-29.4, -23.15, 59, 52], "item_clover": [1.7, 0.0, 30.6, 34]};   // where each sprite sits, in game units, relative to the point the old code drew from
+const DECO=[["deco_lotus_2", 0.0, 161.4, 78.4, 141.6], ["deco_lotus_3", 317.5, 283.5, 42.5, 62.0], ["deco_lotus_5", 0.0, 577.7, 67.3, 52.0], ["deco_lotus_6", 277.0, 459.1, 83.0, 153.8]];   // scene decorations around the edges (above the water, under the frogs)
 const PLUM='#520929',CREAM='#fff8ec',HUDBR='#896838';
 const IMG={};let assetsReady=false,assetsDone=0;const assetsTotal=Object.keys(ASSET_SRC).length;
 function loadOne(id){return new Promise(res=>{const im=new Image();im.onload=im.onerror=()=>{assetsDone++;res()};im.src=ASSET_SRC[id];IMG[id]=im})}
@@ -39,8 +39,7 @@ function drawRect(id,ox,oy,k){const im=img(id),r=RECT[id];if(!im||!r)return fals
 function rrect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(r,w/2,h/2))}
 // a stretchy panel: the painted banner, cut into left cap / middle / right cap so it keeps its round ends at any width
 function panel(x,y,w,h){const im=img('banner_panel');if(!im){ctx.fillStyle='rgba(6,20,16,.72)';rrect(x,y,w,h,14);ctx.fill();return}
-  const s=h/im.height,cap=Math.min(im.height*.55,im.width/2),cw=cap*s;
-  ctx.drawImage(im,0,0,cap,im.height,x,y,cw,h);ctx.drawImage(im,cap,0,im.width-cap*2,im.height,x+cw,y,Math.max(0,w-cw*2),h);ctx.drawImage(im,im.width-cap,0,cap,im.height,x+w-cw,y,cw,h)}
+  nine('banner_panel',x,y,w,h,Math.round(im.height*.45),h*.45)}
 
 let OYV=0;   // extra scene above and below the 360x640 play area, in game units (fills tall phone screens)
 function resize(){
@@ -107,7 +106,7 @@ const EV_WARN=2.2, EV_CALM=6, EGG_FEAST=9, BURST_ROWS=3, BURST_TIME=.55, ROW_H=4
 const LV_START=60, LV_RATE=.003;   // the main difficulty: after the first minute, boarding and rows keep speeding up with time (+0.4% a second, no ceiling)
 const EV_W={rows:.45,reds:.3,eggs:.25};
 const CRACKS_MAX=3;
-const RAID_FROM=3;   // the red raid can come from the 4th event on   // a red frog crashing on the kayak cracks it; the third crack sinks it
+const RAID_FROM=2;   // the red raid can come from the 4th event on   // a red frog crashing on the kayak cracks it; the third crack sinks it
 const EGG_RAIN=.15, EGG_BOARD=2.2;   // chance a wave is an egg rain instead of a rush; eggs climb aboard this much faster
 const RUSH_ROWS=2.4, RUSH_BOARD=1.8, CALM_BOARD=.45;              // how much faster rows / boarders come during a rush; boarders during a calm
 const ADULT_WAIT=.55;             // an adult crouches this long, then uses its ability
@@ -126,8 +125,12 @@ const SEATS=[[33,487],[33,535],[33,583]];   // item pads along the left edge (ta
 // ---------- items (bought in the shop when you sink; up to 3 sit in the cockpit seats and stay there between runs; tap to use) ----------
 const ITEMS={rainbow:{icon:'🌈',name:'Rainbow',desc:'Any colours merge for a moment'},
   bucket:{icon:'🪣',name:'Bucket',desc:'Scoops frogs off the kayak'},
-  net:{icon:'🥅',name:'Net',desc:'Stops the next red frog (works by itself)'}};
+  net:{icon:'🥅',name:'Net',desc:'Stops the next red frog (works by itself)'},
+  clover:{icon:'🍀',name:'Clover',desc:'The piggy bank keeps 20% this run'}};
 const ITEM_KEYS=Object.keys(ITEMS),ITEM_MAX=3,RAINBOW_TIME=6;
+const ITEM_TILT={bucket:-Math.PI/6,clover:Math.PI/6};
+const PRICE={clover:60,bucket:600,net:700,rainbow:900};
+let seatOut=null;   // the item pushed out of a full row of seats (floats up and fades)
 // ---------- state ----------
 let state='start',t=0,frogs=[],parts=[],texts=[],leavers=[],reds=[],deckReds=[],slapped=[],clouds=[],raft=[],
   coins=0,meters=0,pace=0,cool=0,rowT=0,boardT=0,sinkT=0,load=0,thrown=0,drag=null,endT=0,scroll=0,shake=0,pileLow=0,
@@ -240,7 +243,7 @@ function drawMood(){if(state!=='play'&&state!=='card')return;
         ctx.fillStyle='rgba(255,246,200,'+(.8*tw*moodK)+')';const z=3+3*tw;ctx.beginPath();ctx.moveTo(x,y-z);ctx.lineTo(x+z*.3,y);ctx.lineTo(x,y+z);ctx.lineTo(x-z*.3,y);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(x-z,y);ctx.lineTo(x,y+z*.3);ctx.lineTo(x+z,y);ctx.lineTo(x,y-z*.3);ctx.closePath();ctx.fill()}}}
   if(calmK>.01){ctx.fillStyle='rgba(255,255,225,'+(.08*calmK)+')';ctx.fillRect(0,-OYV,W,H+OYV*2)}}
 function raidPositions(n){const w=n*(2*STAGES[ADULT].r+2);return Array.from({length:n},(_,i)=>(W-w)/2+STAGES[ADULT].r+i*(2*STAGES[ADULT].r+2))}
-function pickEvent(){if(evN===0)return 'rows';
+function pickEvent(){if(evN===0)return 'rows';if(evN===1)return 'eggs';if(evN===2&&redsSeen)return 'reds';
   const ok=Object.keys(EV_W).filter(k=>!(k==='reds'&&(!redsSeen||evKind==='reds'||evN<RAID_FROM)));let r=Math.random()*ok.reduce((a,k)=>a+EV_W[k],0);
   for(const k of ok){r-=EV_W[k];if(r<=0)return k}return 'rows'}
 function rumble(){tone(80,.9,'sine',.16,.6);noise(.6,220,.12)}
@@ -265,19 +268,18 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+
 function makeMission(idx){let sp,n;
   if(idx%2===0){sp='green';n=Math.min(30,6+4*(idx/2))}   // 6, 10, 14 ...
   else{const pool=['red'].concat(['orange','purple','blue'].filter(k=>seen.includes(k)));sp=pool[((idx-1)/2)%pool.length];n=Math.min(8,{red:2,orange:3,purple:3,blue:2}[sp]+Math.floor(idx/4))}
-  return{day:today(),idx,sp,need:n,left:n,item:ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]}}
+  const pk=['rainbow','bucket','net'];return{day:today(),idx,sp,need:n,left:n,item:pk[Math.floor(Math.random()*pk.length)]}}
 function saveMission(){try{localStorage.setItem('wadMission4',JSON.stringify(mission))}catch(e){}}
 function loadMission(){try{mission=JSON.parse(localStorage.getItem('wadMission4')||'null')}catch(e){mission=null}
   if(!mission||mission.day!==today()){mission=makeMission(0);saveMission()}}   // a new day: back to the first, easy poster
 loadMission();
 function missionHit(sp){if(tut||!mission||misAnim||state!=='play'||sp!==mission.sp)return;mission.left--;misPop=.3;saveMission();tone(990,.06,'triangle',.06);
   if(mission.left<=0)misAnim={t:0,item:mission.item,done:{}}}
-function missionUpdate(dt){misPop=Math.max(0,misPop-dt);if(seatPop){seatPop.t+=dt;if(seatPop.t>.5)seatPop=null}
+function missionUpdate(dt){misPop=Math.max(0,misPop-dt);if(seatPop){seatPop.t+=dt;if(seatPop.t>.5)seatPop=null}if(seatOut){seatOut.t+=dt;if(seatOut.t>.6)seatOut=null}
   if(!misAnim)return;const a=misAnim;a.t+=dt;
   if(!a.done.peel){a.done.peel=1;tone(660,.1,'triangle',.1);setTimeout(()=>tone(880,.1,'triangle',.1),80);setTimeout(()=>tone(1320,.16,'triangle',.1),160);noise(.2,2500,.08)}
   if(a.t>1.1&&!a.done.give){a.done.give=1;
-    if(boatItems.length<ITEM_MAX){boatItems.push(a.item);saveItems();seatPop={i:boatItems.length-1,t:0};tone(1046,.12,'triangle',.12)}
-    else{coins+=MIS_FULL_COINS;for(let i=0;i<8;i++)coinFly.push({x:MIS_PAD[0]+rnd(-8,8),y:MIS_PAD[1]+rnd(-8,8),t:-i*.05,dur:rnd(.45,.65)});tone(1046,.12,'triangle',.12)}}
+    {if(boatItems.length>=ITEM_MAX)seatOut={k:boatItems.shift(),t:0};boatItems.push(a.item);saveItems();seatPop={i:boatItems.length-1,t:0};tone(1046,.12,'triangle',.12)}}
   if(a.t>1.5&&!a.done.next){a.done.next=1;mission=makeMission(mission.idx+1);saveMission()}
   if(a.t>2.1)misAnim=null}
 const MIS_SC=1.55;
@@ -427,7 +429,7 @@ function aimTarget(){const it=raft[0];if(!it||it.st!==0||!aiming())return null;c
   return best&&canEat(best)?best:null}
 function gainItem(k,x,y){burst(x,y,'#fff3a0',16);tone(880,.1,'triangle',.12);setTimeout(()=>tone(1320,.14,'triangle',.12),90);
   say(x,y-30,ITEMS[k].icon+' '+ITEMS[k].name,'#fff3a0',18);
-  if(boatItems.length<ITEM_MAX){boatItems.push(k);saveItems()}else useItem(k)}
+  if(boatItems.length>=ITEM_MAX)seatOut={k:boatItems.shift(),t:0};boatItems.push(k);saveItems()}
 function useItem(k){if(tut)tut.used=k;if(k==='bucket'&&!bucketTold){bucketTold=true;bucketTip=false;try{localStorage.setItem('wadBucket4','1')}catch(e){}}showBanner(ITEMS[k].icon+' '+ITEMS[k].name,'#fff3a0');
   if(k==='rainbow'){rainbowT=RAINBOW_TIME;rainNote=0;for(const f of frogs){f.awake=true;if(!f.enter)f.pop=.2}shake=Math.max(shake,.15);
     [523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.14,'triangle',.12),i*80))}
@@ -570,8 +572,10 @@ function drawAd(){ctx.fillStyle='#111';ctx.fillRect(0,-OYV,W,H+OYV*2);txt('AD',W
   ctx.fillStyle='rgba(255,255,255,.2)';ctx.fillRect(60,H/2+40,W-120,8);ctx.fillStyle='#ffd34a';ctx.fillRect(60,H/2+40,(W-120)*clamp(adT/AD_TIME,0,1),8)}   // a stand-in for a real video ad
 function finishOver(){state='over';endHint=null;endT=t;const bonus=Math.floor(meters/10);
   endInfo={secs:Math.floor(t),m:Math.floor(meters),frogCoins:coins,bonus,total:coins+bonus,newBest:Math.floor(meters)>bestM};
-  endInfo.saved=Math.ceil(endInfo.total*PIGGY_CUT);piggyShow=wallet;wallet+=endInfo.saved;   // the piggy bank only keeps 10% of the runbestM=Math.max(bestM,Math.floor(meters));
-  const pool=ITEM_KEYS.slice().sort(()=>Math.random()-.5);shop=pool.map((k,i)=>({k,price:150+Math.floor(Math.random()*11)*25,x:72+i*108,y:430,sold:false,shakeT:0}));
+  {const ci=boatItems.indexOf('clover');endInfo.cut=ci>=0?.2:PIGGY_CUT;if(ci>=0){boatItems.splice(ci,1);saveItems()}}   // a lucky clover: the piggy bank keeps 20%
+  endInfo.saved=Math.ceil(endInfo.total*endInfo.cut);piggyShow=wallet;wallet+=endInfo.saved;   // the piggy bank only keeps 10% of the run
+  bestM=Math.max(bestM,Math.floor(meters));
+  const pool=['clover'].concat(['bucket','net','rainbow'].sort(()=>Math.random()-.5).slice(0,2));shop=pool.map((k,i)=>({k,price:PRICE[k],x:72+i*108,y:430,sold:false,shakeT:0}));
   try{localStorage.setItem('wadWallet',wallet);localStorage.setItem('wadBestM4',bestM)}catch(e){}
   sadSound();drag=null}
 
@@ -708,10 +712,11 @@ function drawCrack(i){const c=CRACKS[i],fx=crackFx>0&&i===cracks-1?1+crackFx*.6:
   ctx.strokeStyle='rgba(255,220,190,.7)';ctx.lineWidth=5*fx;ctx.beginPath();c.forEach(([x,y],k)=>k?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();
   ctx.strokeStyle='#5a2a14';ctx.lineWidth=2.6*fx;ctx.beginPath();c.forEach(([x,y],k)=>k?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();
   const[mx,my]=c[1];ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx+(i===1?-9:9),my-5);ctx.stroke()}
+function kayakBob(){const sink=clamp(load,0,1.2);return Math.sin(t*2.2)*1.5+sink*8+(load>=1?beatFx*4:0)+(state==='over'||state==='cont'||state==='ad'?Math.min(60,(t-endT)*50):state==='restart'?60*Math.pow(1-clamp(restartT/1.1,0,1),2):0)}
+function drawKayakShadow(){const bob=kayakBob();ctx.save();ctx.translate(180,KB+bob);ctx.scale(KS,KS);ctx.translate(-180,-KB+KY);ctx.fillStyle='rgba(18,70,60,.3)';ell(180,600,140,120);ctx.restore()}
 function drawKayak(){
-  const sink=clamp(load,0,1.2),bob=Math.sin(t*2.2)*1.5+sink*8+(load>=1?beatFx*4:0)+(state==='over'||state==='cont'||state==='ad'?Math.min(60,(t-endT)*50):state==='restart'?60*Math.pow(1-clamp(restartT/1.1,0,1),2):0);
+  const bob=kayakBob();
   ctx.save();ctx.translate(180,KB+bob);ctx.scale(KS,KS);ctx.translate(-180,-KB+KY);
-  ctx.fillStyle='rgba(18,70,60,.3)';ell(180,600,140,120);
   const kim=img('kayak');
   if(kim){const KL=r=>[(r[0]-180)/KS+180,(r[1]-KB)/KS+KB-KY,r[2]/KS,r[3]/KS],q=KL(RECT.kayak);ctx.drawImage(kim,q[0],q[1],q[2],q[3]);
     for(let i=0;i<cracks;i++){const id='kayak_crack_'+(i+1),c=img(id);if(!c)continue;const p=KL(RECT[id]),fx=crackFx>0&&i===cracks-1?1+crackFx*.6:1,cx=p[0]+p[2]/2,cy=p[1]+p[3]/2;
@@ -901,6 +906,7 @@ function drawPlay(){
       ctx.fillStyle='#ff8fa0';ctx.beginPath();ctx.ellipse(0,r*.24+r*.18*m,r*.24,r*.12*m,0,0,Math.PI*2);ctx.fill();ctx.restore()}}
     if(f.fed>0){ctx.fillStyle='#e1eefc';for(let i=0;i<EAT_TO_GROW;i++){ctx.globalAlpha=i<f.fed?1:.3;dot(f.x-4+i*8,f.y-f.r-6,2.6)}ctx.globalAlpha=1}}
   for(const s of swimmers)drawFrog(s.st,s.sp,s.x,s.y+(s.t>0?Math.sin(t*16+s.y)*1.5:0),s.r,s.t>0?s.dir*.15:0,1);
+  drawDeco();   // edge lily pads float above the swamp frogs
   drawCanopy();
   for(const g of rings){const k=g.t/.35;ctx.strokeStyle='rgba('+g.c+','+((g.a||.8)*(1-k))+')';ctx.lineWidth=3*(1-k)+1;ctx.beginPath();ctx.arc(g.x,g.y,g.r*(.6+.9*k),0,7);ctx.stroke()}
   for(const c of clouds){const k=c.t/c.dur;ctx.fillStyle='rgba('+c.c+','+(.4*(1-k))+')';dot(c.x,c.y,c.r*(.5+.6*k));
@@ -927,7 +933,11 @@ function drawPlay(){
   for(const d of deckReds){const sc=1+Math.sin(d.t*6)*.04;drawFrog(ADULT,'red',d.x,d.y+bob,STAGES[ADULT].r*.8,Math.sin(d.t*3)*.1,sc);
     ctx.strokeStyle='rgba(255,154,133,'+(.5+.4*Math.sin(t*10))+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(d.x,d.y+bob,STAGES[ADULT].r*.8+6,0,7);ctx.stroke()}
   if(state!=='over'&&state!=='cont'&&state!=='ad')drawMission();
-  if(state!=='over'&&state!=='cont'&&state!=='ad')for(let i=0;i<boatItems.length;i++){const[x,y]=SEATS[i];const sp0=seatPop&&seatPop.i===i?seatPop.t/.5:-1;if(i===pulseItem||sp0>=0){const z=sp0>=0?(sp0<.6?1.35*Math.sin(sp0/.6*Math.PI/2):1.35-.35*(sp0-.6)/.4):1+.16*Math.abs(Math.sin(t*6));ctx.save();ctx.translate(x-hullX,y);ctx.scale(z,z);drawSticker(ITEMS[boatItems[i]].icon,0,0,22);ctx.restore()}else drawSticker(ITEMS[boatItems[i]].icon,x-hullX,y,22)}
+  if(state!=='over'&&state!=='cont'&&state!=='ad'){for(let i=0;i<boatItems.length;i++){const[x,y]=SEATS[i],k=boatItems[i],sp0=seatPop&&seatPop.i===i?seatPop.t/.5:-1;
+    const z=sp0>=0?(sp0<.6?1.35*Math.sin(sp0/.6*Math.PI/2):1.35-.35*(sp0-.6)/.4):i===pulseItem?1+.16*Math.abs(Math.sin(t*6)):1,tilt=ITEM_TILT[k]||0;
+    if(k==='clover'){ctx.fillStyle='rgba(200,255,150,'+(.25+.15*Math.sin(t*3))+')';dot(x-hullX,y,17)}
+    ctx.save();ctx.translate(x-hullX,y);ctx.rotate(tilt);ctx.scale(z*(tilt?.9:1),z*(tilt?.9:1));drawSticker(ITEMS[k].icon,0,0,22);ctx.restore()}
+  if(seatOut){const q=seatOut.t/.6;ctx.save();ctx.globalAlpha=1-q;ctx.translate(SEATS[0][0]-hullX,SEATS[0][1]-30*q);ctx.scale(1+.3*q,1+.3*q);drawSticker(ITEMS[seatOut.k].icon,0,0,22);ctx.restore()}}
   if(nets>0){ctx.strokeStyle='rgba(240,240,230,.55)';ctx.lineWidth=1.5;const cx=180,cy=BOW[1]+30+bob;
     for(let i=-4;i<=4;i++){ctx.beginPath();ctx.moveTo(cx+i*12-30,cy-30);ctx.lineTo(cx+i*12+30,cy+30);ctx.moveTo(cx+i*12+30,cy-30);ctx.lineTo(cx+i*12-30,cy+30);ctx.stroke()}}
   const nx=raft[0];
@@ -988,6 +998,7 @@ function playAgain(){if(USE_HEARTS&&hearts.n<=0)return;
   jumpers=raft.map((it,i)=>{const[sx,sy]=slotPos(i),x=it.px??sx,y=it.py??sy;return{st:it.st,sp:it.sp,x,y,vx:(x<W/2?-1:1)*rnd(80,190),vy:rnd(-440,-330),t:-i*.05,land:y+rnd(25,60)}});
   for(const dr of deckReds)jumpers.push({st:ADULT,sp:'red',x:dr.x,y:dr.y,vx:(dr.x<W/2?-1:1)*rnd(120,220),vy:-460,t:0,land:dr.y+50});
   swimmers=frogs.filter(f=>!f.dead).map(f=>({st:f.st,sp:f.sp,x:f.x,y:f.y,r:f.r,dir:f.x<W/2?-1:1,t:-clamp((BOAT_Y-f.y)/(BOAT_Y-TOP),0,1)*.45,v:0}));
+  hullHit=0;shake=0;beatFx=0;sinkT=0;crackFx=0;gaugePulse=0;   // no leftover shaking from the sinking
   oldM=endInfo?endInfo.m:Math.floor(meters);const v0=vl,tf=tutDoneFlag;tutDoneFlag=true;newGame(null);tutDoneFlag=tf;vl=v0;
   for(const f of frogs){f.ty0=f.y;f.y=TOP-40}   // the new rows wait under the lily band
   raft=[];state='restart';restartT=0;tone(520,.12,'triangle',.1);setTimeout(()=>tone(660,.14,'triangle',.1),120)}
@@ -1008,8 +1019,13 @@ const PIGGY_CUT=.1;
 const OVER_PIG=[108,292],BTN={x:W/2,y:552,w:200,h:52};
 const coinsShown=()=>{const k=clamp((t-endT-1.5)/1.2,0,1);return Math.round(piggyShow+(wallet-piggyShow)*k)};
 // a 9-slice of a painted panel: corners keep their size, edges and middle stretch
-function nine(id,x,y,w,h,sp,du){const im=img(id);if(!im)return false;const iw=im.width,ih=im.height,sx=[0,sp,iw-sp,iw],sy=[0,sp,ih-sp,ih],dx=[x,x+du,x+w-du,x+w],dy=[y,y+du,y+h-du,y+h];
-  for(let a=0;a<3;a++)for(let b=0;b<3;b++){const sw=sx[a+1]-sx[a],sh=sy[b+1]-sy[b],dw=dx[a+1]-dx[a],dh=dy[b+1]-dy[b];if(sw>0&&sh>0&&dw>0&&dh>0)ctx.drawImage(im,sx[a],sy[b],sw,sh,dx[a],dy[b],dw,dh)}return true}
+const NINE_CACHE=new Map();
+function nine(id,x,y,w,h,sp,du){const im=img(id);if(!im)return false;
+  const W2=Math.max(1,Math.round(w*PX)),H2=Math.max(1,Math.round(h*PX)),D=Math.max(1,Math.round(du*PX)),key=id+'|'+W2+'|'+H2+'|'+sp+'|'+D;let c=NINE_CACHE.get(key);
+  if(!c){c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d'),iw=im.width,ih=im.height,sx=[0,sp,iw-sp,iw],sy=[0,sp,ih-sp,ih],dx=[0,D,W2-D,W2],dy=[0,D,H2-D,H2];
+    for(let a=0;a<3;a++)for(let b=0;b<3;b++){const sw=sx[a+1]-sx[a],sh=sy[b+1]-sy[b],dw=dx[a+1]-dx[a]+(a<2?1:0),dh=dy[b+1]-dy[b]+(b<2?1:0);if(sw>0&&sh>0&&dw>0&&dh>0)g.drawImage(im,sx[a],sy[b],sw,sh,dx[a],dy[b],dw,dh)}
+    NINE_CACHE.set(key,c)}
+  ctx.drawImage(c,x,y,w,h);return true}
 // the shop slot stretched taller: the awning and the bottom edge keep their size, the sides stretch
 // a shop card: the cream new-frog card, 9-sliced to size, with the striped awning across the top
 function shopSlot(x,y,w,h){const cd=img('shop_card'),aw=img('shop_awning');
@@ -1037,8 +1053,9 @@ function drawOver(){const k=clamp((t-endT-.9)/.4,0,1);if(k<=0)return;const e=end
   for(let i=0;i<10;i++){const p=(fk-i*.08)/.5;if(p<0||p>=1)continue;const q=p*p*(3-2*p);coinIcon(from[0]+(px-from[0])*q,from[1]+(py-from[1])*q-Math.sin(p*Math.PI)*40,7)}
   const hop=fk>0&&fk<1.3?Math.abs(Math.sin(fk*12))*.08:0,sx=poorT>0?Math.sin(t*55)*8*poorT/.6:0;
   ctx.save();ctx.translate(px+sx,py);ctx.scale((1+hop)*.85,(1-hop*.6)*.85);if(!drawRect('piggy_bank',-40,-40)){ctx.font='56px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.textAlign='center';ctx.fillText('🐷',0,18)}
-  {const tg=img('tag_10pct');if(tg){const r=RECT.tag_10pct;ctx.drawImage(tg,40.6-r[2]/2,-14.1-r[3]/2,r[2],r[3])}}ctx.restore();
-  label('piggy bank keeps 10%',176,283,13,'rgba(255,248,236,.75)');
+  if(e.cut>.1){ctx.save();ctx.translate(40,-14);ctx.rotate(.15);ctx.fillStyle=CREAM;rrect(-22,-12,44,24,8);ctx.fill();ctx.strokeStyle=PLUM;ctx.lineWidth=2.5;rrect(-22,-12,44,24,8);ctx.stroke();label('20%',4,6,15,PLUM,'center');ctx.restore();drawRect('item_clover',18-17*.55,-34-17*.55,.55)}
+  else{const tg=img('tag_10pct');if(tg){const r=RECT.tag_10pct;ctx.drawImage(tg,40.6-r[2]/2,-14.1-r[3]/2,r[2],r[3])}}ctx.restore();
+  label('piggy bank keeps '+Math.round((e.cut||.1)*100)+'%',176,283,13,e.cut>.1?'#c8ff9e':'rgba(255,248,236,.75)');
   coinIcon(186,304,10);{const s=String(coinsShown());txt(s,200,313,26,poorT>0?'#ff6b5a':'#ffe27a');if(fk>0){ctx.font='600 26px '+FONT;const w=ctx.measureText(s).width;label('+'+e.saved,206+w,312,15,'#c8ff9e')}}
   // shop: three taller slots, item under the awning, name and price below
   for(const c of shop){const it=ITEMS[c.k],shx=c.shakeT>0?Math.sin(t*60)*6*c.shakeT/.6:0,sw=96,sh2=132,x=c.x-sw/2+shx,y=352;
@@ -1056,9 +1073,8 @@ function drawOver(){const k=clamp((t-endT-.9)/.4,0,1);if(k<=0)return;const e=end
 let endHint=null;
 function overTap(p){if(t-endT<1.2)return;
   for(const c of shop)if(!c.sold&&Math.abs(p.x-c.x)<48&&p.y>352&&p.y<484){
-    if(boatItems.length>=ITEM_MAX){endHint={s:'Seats are full: use an item first'};c.shakeT=.6;tone(200,.15,'square',.08);return}
-    if(wallet>=c.price){wallet-=c.price;piggyShow=wallet;c.sold=true;boatItems.push(c.k);saveItems();try{localStorage.setItem('wadWallet',wallet)}catch(e){}
-      endHint={s:ITEMS[c.k].icon+' '+ITEMS[c.k].desc};tone(880,.1,'triangle',.12);setTimeout(()=>tone(1320,.14,'triangle',.12),90)}
+    if(wallet>=c.price){wallet-=c.price;piggyShow=wallet;c.sold=true;let out=null;if(boatItems.length>=ITEM_MAX){out=boatItems.shift();seatOut={k:out,t:0}}boatItems.push(c.k);saveItems();try{localStorage.setItem('wadWallet',wallet)}catch(e){}
+      endHint={s:out?ITEMS[out].name+' swapped out for '+ITEMS[c.k].name:ITEMS[c.k].desc};tone(880,.1,'triangle',.12);setTimeout(()=>tone(1320,.14,'triangle',.12),90)}
     else{poorT=.6;c.shakeT=.6;endHint={s:'Not enough coins!'};tone(200,.15,'square',.08);setTimeout(()=>tone(150,.2,'square',.08),120)}
     return}
   if(t-endT>1.8&&Math.abs(p.x-BTN.x)<BTN.w/2&&Math.abs(p.y-BTN.y)<BTN.h/2+6)playAgain()}
@@ -1066,7 +1082,7 @@ function overTap(p){if(t-endT<1.2)return;
 function draw(){
   if(!assetsReady){drawLoading();return}
   ctx.save();if(shake>0)ctx.translate((Math.random()-.5)*12*shake,(Math.random()-.5)*12*shake);
-  drawBG();drawDeco();drawMood();drawRainbow();drawPlay();if(state==='intro')drawIntro();
+  drawBG();drawKayakShadow();drawMood();drawRainbow();drawPlay();if(state==='intro')drawIntro();
   for(const j of jumpers)if(j.t>=0)drawFrog(j.st,j.sp,j.x,j.y,STAGES[j.st].r*.8,j.t*6,1);
   ctx.restore();
   if(state==='play'&&wave==='event'&&evKind==='eggs'){ctx.globalAlpha=.6;for(let i=0;i<10;i++){const x=(i*71+20)%W,y=((t*90+i*57)%(H-120))+TOP;drawFrog(0,null,x,y,6,0,1)}ctx.globalAlpha=1}
@@ -1096,7 +1112,7 @@ cv.addEventListener('pointerdown',e=>{const p=pt(e);audioOn();idleT=0;
   if(state==='restart'){if(restartT>.3)finishRestart();return}   // tap to skip
   if(state==='card'){if(cardT>.6){state='play';card=null}return}
   cv.setPointerCapture(e.pointerId);
-  const ii=itemAt(p);if(ii>=0){const k=boatItems.splice(ii,1)[0];saveItems();useItem(k);return}
+  const ii=itemAt(p);if(ii>=0){if(boatItems[ii]==='clover'){say(SEATS[ii][0]+40,SEATS[ii][1]-10,'Works when the run ends','#c8ff9e',13);return}const k=boatItems.splice(ii,1)[0];saveItems();useItem(k);return}
   lastP=p;if(swat(p,0,0))return;
   if(p.y>300&&raft.length)drag={x:p.x,y:p.y,cx:p.x,cy:p.y}});
 cv.addEventListener('pointermove',e=>{const p=pt(e);if(state==='play'&&e.buttons&&lastP){if(swat(p,p.x-lastP.x,p.y-lastP.y)){lastP=p;drag=null;return}}lastP=p;if(!drag)return;drag.cx=p.x;drag.cy=p.y;});
