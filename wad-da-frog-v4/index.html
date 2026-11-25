@@ -26,8 +26,8 @@ const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const FONT='Fredoka, system-ui, sans-serif';
 let PX=1;const spriteCache=new Map();
 // ---------- v.4 art: painted sprites loaded from assets/ (the old vector drawing stays as a fallback) ----------
-const ASSET_SRC={"frog_egg": "assets/frogs/frog_egg.png", "frog_tadpole": "assets/frogs/frog_tadpole.png", "frog_tadpole_sleep": "assets/frogs/frog_tadpole_sleep.png", "frog_green_teen": "assets/frogs/frog_green_teen.png", "frog_green_teen_sleep": "assets/frogs/frog_green_teen_sleep.png", "frog_green_adult": "assets/frogs/frog_green_adult.png", "frog_red_teen": "assets/frogs/frog_red_teen.png", "frog_red_teen_sleep": "assets/frogs/frog_red_teen_sleep.png", "frog_red_adult": "assets/frogs/frog_red_adult.png", "frog_purple_legs": "assets/frogs/frog_purple_legs.png", "frog_purple_legs_sleep": "assets/frogs/frog_purple_legs_sleep.png", "frog_purple_teen": "assets/frogs/frog_purple_teen.png", "frog_purple_teen_sleep": "assets/frogs/frog_purple_teen_sleep.png", "frog_purple_adult": "assets/frogs/frog_purple_adult.png", "frog_orange_legs": "assets/frogs/frog_orange_legs.png", "frog_orange_legs_sleep": "assets/frogs/frog_orange_legs_sleep.png", "frog_orange_teen": "assets/frogs/frog_orange_teen.png", "frog_orange_teen_sleep": "assets/frogs/frog_orange_teen_sleep.png", "frog_orange_adult": "assets/frogs/frog_orange_adult.png", "frog_blue_legs": "assets/frogs/frog_blue_legs.png", "frog_blue_legs_sleep": "assets/frogs/frog_blue_legs_sleep.png", "frog_blue_tiny": "assets/frogs/frog_blue_tiny.png", "frog_blue_tiny_sleep": "assets/frogs/frog_blue_tiny_sleep.png", "frog_blue_teen": "assets/frogs/frog_blue_teen.png", "frog_blue_teen_sleep": "assets/frogs/frog_blue_teen_sleep.png", "frog_blue_adult": "assets/frogs/frog_blue_adult.png", "frog_yellow_legs": "assets/frogs/frog_yellow_legs.png", "frog_yellow_legs_sleep": "assets/frogs/frog_yellow_legs_sleep.png", "frog_yellow_tiny": "assets/frogs/frog_yellow_tiny.png", "frog_yellow_tiny_sleep": "assets/frogs/frog_yellow_tiny_sleep.png", "frog_yellow_teen": "assets/frogs/frog_yellow_teen.png", "frog_yellow_teen_sleep": "assets/frogs/frog_yellow_teen_sleep.png", "frog_yellow_grown": "assets/frogs/frog_yellow_grown.png", "frog_yellow_grown_sleep": "assets/frogs/frog_yellow_grown_sleep.png", "frog_yellow_adult": "assets/frogs/frog_yellow_adult.png", "kayak": "assets/scene/kayak.png", "kayak_crack_1": "assets/scene/kayak_crack_1.png", "kayak_crack_2": "assets/scene/kayak_crack_2.png", "kayak_crack_3": "assets/scene/kayak_crack_3.png", "bg_swamp": "assets/scene/bg_swamp.jpg", "swamp_leaf": "assets/scene/swamp_leaf.png", "lilypad": "assets/scene/lilypad.png", "lilypad_stem": "assets/scene/lilypad_stem.png", "btn_tutorial": "assets/ui/btn_tutorial.png", "icon_coin": "assets/ui/icon_coin.png", "tutorial_hand": "assets/ui/tutorial_hand.png", "load_icon_happy": "assets/ui/load_icon_happy.png", "load_icon_hmm": "assets/ui/load_icon_hmm.png", "load_icon_worried": "assets/ui/load_icon_worried.png", "load_icon_panic": "assets/ui/load_icon_panic.png", "item_rainbow": "assets/ui/item_rainbow.png", "item_bucket": "assets/ui/item_bucket.png", "item_net": "assets/ui/item_net.png", "mission_poster": "assets/ui/mission_poster.png", "card_newfrog": "assets/ui/card_newfrog.png", "btn_continue_ad": "assets/ui/btn_continue_ad.png", "mission_pad": "assets/ui/mission_pad.png", "shop_slot": "assets/ui/shop_slot.png", "piggy_bank": "assets/ui/piggy_bank.png", "tag_10pct": "assets/ui/tag_10pct.png", "logo": "assets/ui/logo.png", "cover": "assets/ui/cover.jpg", "banner_panel": "assets/ui/banner_panel.png", "lotus_bud": "assets/scene/lotus_bud.png", "lotus_half": "assets/scene/lotus_half.png", "lotus_full": "assets/scene/lotus_full.png", "deco_lotus_1": "assets/deco/deco_lotus_1.png", "deco_lotus_2": "assets/deco/deco_lotus_2.png", "deco_lotus_3": "assets/deco/deco_lotus_3.png", "deco_lotus_5": "assets/deco/deco_lotus_5.png", "deco_lotus_6": "assets/deco/deco_lotus_6.png"};
-const RECT={"frog_egg": [-10.5, -10.5, 21, 21], "frog_tadpole": [-13.12, -13.12, 27.75, 26.25], "frog_tadpole_sleep": [-13.12, -13.12, 27.75, 26.25], "frog_green_teen": [-24.15, -19.4, 48.5, 43.5], "frog_green_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_green_adult": [-36.1, -40, 72.25, 74.75], "frog_red_teen": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_red_adult": [-36.1, -44.75, 72.25, 79.5], "frog_purple_legs": [-16.28, -16.28, 34.25, 32.75], "frog_purple_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_purple_teen": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_purple_adult": [-36.1, -51, 72.25, 85.75], "frog_orange_legs": [-16.28, -16.28, 34.25, 32.75], "frog_orange_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_orange_teen": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_orange_adult": [-36.1, -28.75, 72.25, 63.5], "frog_blue_legs": [-16.28, -16.28, 34.25, 32.75], "frog_blue_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_blue_tiny": [-19.95, -16.45, 40, 36.5], "frog_blue_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_blue_teen": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_blue_adult": [-36.1, -51, 72.25, 85.75], "frog_yellow_legs": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_tiny": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_yellow_teen": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_grown": [-29.4, -23.15, 59, 52], "frog_yellow_grown_sleep": [-29.4, -23.15, 59, 52], "frog_yellow_adult": [-36.1, -40.5, 72.25, 75.25], "kayak": [44.33, 512.33, 271.33, 233.67], "kayak_crack_1": [104.33, 603.33, 34.33, 70.67], "kayak_crack_2": [226.67, 614.33, 34.33, 56.67], "kayak_crack_3": [161, 546.67, 35.67, 51.67], "bg_swamp": [0, 0, 360, 640], "swamp_leaf": [4, 3, 22, 14], "lilypad": [8.25, 5, 89.25, 43], "lilypad_stem": [8.5, 5, 76.25, 62.25], "btn_tutorial": [3, 3, 45, 47], "icon_coin": [4, 4, 22, 23], "tutorial_hand": [13, 2.5, 37, 48.75], "load_icon_happy": [3, 7.6, 44, 25.4], "load_icon_hmm": [3, 7.6, 44, 25.4], "load_icon_worried": [3, 7.6, 44, 25.4], "load_icon_panic": [3, 7.6, 44, 25.4], "item_rainbow": [1.4, 0, 31.2, 33.2], "item_bucket": [0.2, 0, 33.4, 33], "item_net": [0.2, 3.2, 33.8, 26.8], "mission_poster": [7, 4.4, 57.4, 68.2], "card_newfrog": [8, 4, 248, 312], "btn_continue_ad": [4, 4, 112, 112], "mission_pad": [2, 2, 52, 36], "shop_slot": [2, 2, 96, 100], "piggy_bank": [6.5, 11, 67, 59.5], "tag_10pct": [2.75, 4, 45, 26]};   // where each sprite sits, in game units, relative to the point the old code drew from
+const ASSET_SRC={"frog_egg": "assets/frogs/frog_egg.png", "frog_tadpole": "assets/frogs/frog_tadpole.png", "frog_tadpole_sleep": "assets/frogs/frog_tadpole_sleep.png", "frog_green_teen": "assets/frogs/frog_green_teen.png", "frog_green_teen_sleep": "assets/frogs/frog_green_teen_sleep.png", "frog_green_adult": "assets/frogs/frog_green_adult.png", "frog_red_teen": "assets/frogs/frog_red_teen.png", "frog_red_teen_sleep": "assets/frogs/frog_red_teen_sleep.png", "frog_red_adult": "assets/frogs/frog_red_adult.png", "frog_purple_legs": "assets/frogs/frog_purple_legs.png", "frog_purple_legs_sleep": "assets/frogs/frog_purple_legs_sleep.png", "frog_purple_teen": "assets/frogs/frog_purple_teen.png", "frog_purple_teen_sleep": "assets/frogs/frog_purple_teen_sleep.png", "frog_purple_adult": "assets/frogs/frog_purple_adult.png", "frog_orange_legs": "assets/frogs/frog_orange_legs.png", "frog_orange_legs_sleep": "assets/frogs/frog_orange_legs_sleep.png", "frog_orange_teen": "assets/frogs/frog_orange_teen.png", "frog_orange_teen_sleep": "assets/frogs/frog_orange_teen_sleep.png", "frog_orange_adult": "assets/frogs/frog_orange_adult.png", "frog_blue_legs": "assets/frogs/frog_blue_legs.png", "frog_blue_legs_sleep": "assets/frogs/frog_blue_legs_sleep.png", "frog_blue_tiny": "assets/frogs/frog_blue_tiny.png", "frog_blue_tiny_sleep": "assets/frogs/frog_blue_tiny_sleep.png", "frog_blue_teen": "assets/frogs/frog_blue_teen.png", "frog_blue_teen_sleep": "assets/frogs/frog_blue_teen_sleep.png", "frog_blue_adult": "assets/frogs/frog_blue_adult.png", "frog_yellow_legs": "assets/frogs/frog_yellow_legs.png", "frog_yellow_legs_sleep": "assets/frogs/frog_yellow_legs_sleep.png", "frog_yellow_tiny": "assets/frogs/frog_yellow_tiny.png", "frog_yellow_tiny_sleep": "assets/frogs/frog_yellow_tiny_sleep.png", "frog_yellow_teen": "assets/frogs/frog_yellow_teen.png", "frog_yellow_teen_sleep": "assets/frogs/frog_yellow_teen_sleep.png", "frog_yellow_grown": "assets/frogs/frog_yellow_grown.png", "frog_yellow_grown_sleep": "assets/frogs/frog_yellow_grown_sleep.png", "frog_yellow_adult": "assets/frogs/frog_yellow_adult.png", "kayak": "assets/scene/kayak.png", "kayak_crack_1": "assets/scene/kayak_crack_1.png", "kayak_crack_2": "assets/scene/kayak_crack_2.png", "kayak_crack_3": "assets/scene/kayak_crack_3.png", "bg_swamp": "assets/scene/bg_swamp.jpg", "swamp_leaf": "assets/scene/swamp_leaf.png", "lilypad": "assets/scene/lilypad.png", "lilypad_stem": "assets/scene/lilypad_stem.png", "btn_tutorial": "assets/ui/btn_tutorial.png", "icon_coin": "assets/ui/icon_coin.png", "tutorial_hand": "assets/ui/tutorial_hand.png", "load_icon_happy": "assets/ui/load_icon_happy.png", "load_icon_hmm": "assets/ui/load_icon_hmm.png", "load_icon_worried": "assets/ui/load_icon_worried.png", "load_icon_panic": "assets/ui/load_icon_panic.png", "item_rainbow": "assets/ui/item_rainbow.png", "item_bucket": "assets/ui/item_bucket.png", "item_net": "assets/ui/item_net.png", "mission_poster": "assets/ui/mission_poster.png", "card_newfrog": "assets/ui/card_newfrog.png", "btn_continue_ad": "assets/ui/btn_continue_ad.png", "mission_pad": "assets/ui/mission_pad.png", "piggy_bank": "assets/ui/piggy_bank.png", "tag_10pct": "assets/ui/tag_10pct.png", "logo": "assets/ui/logo.png", "cover": "assets/ui/cover.jpg", "banner_panel": "assets/ui/banner_panel.png", "lotus_bud": "assets/scene/lotus_bud.png", "lotus_half": "assets/scene/lotus_half.png", "lotus_full": "assets/scene/lotus_full.png", "deco_lotus_1": "assets/deco/deco_lotus_1.png", "deco_lotus_2": "assets/deco/deco_lotus_2.png", "deco_lotus_3": "assets/deco/deco_lotus_3.png", "deco_lotus_5": "assets/deco/deco_lotus_5.png", "deco_lotus_6": "assets/deco/deco_lotus_6.png", "frog_green_teen_eat": "assets/frogs/frog_green_teen_eat.png", "frog_red_teen_eat": "assets/frogs/frog_red_teen_eat.png", "frog_purple_teen_eat": "assets/frogs/frog_purple_teen_eat.png", "frog_orange_teen_eat": "assets/frogs/frog_orange_teen_eat.png", "frog_blue_teen_eat": "assets/frogs/frog_blue_teen_eat.png", "frog_yellow_teen_eat": "assets/frogs/frog_yellow_teen_eat.png", "frog_blue_tiny_eat": "assets/frogs/frog_blue_tiny_eat.png", "frog_yellow_tiny_eat": "assets/frogs/frog_yellow_tiny_eat.png", "frog_yellow_grown_eat": "assets/frogs/frog_yellow_grown_eat.png", "shop_card": "assets/ui/shop_card.png", "shop_awning": "assets/ui/shop_awning.png"};
+const RECT={"frog_egg": [-10.5, -10.5, 21, 21], "frog_tadpole": [-13.12, -13.12, 27.75, 26.25], "frog_tadpole_sleep": [-13.12, -13.12, 27.75, 26.25], "frog_green_teen": [-24.15, -19.4, 48.5, 43.5], "frog_green_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_green_adult": [-36.1, -40, 72.25, 74.75], "frog_red_teen": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_red_adult": [-36.1, -44.75, 72.25, 79.5], "frog_purple_legs": [-16.28, -16.28, 34.25, 32.75], "frog_purple_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_purple_teen": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_purple_adult": [-36.1, -51, 72.25, 85.75], "frog_orange_legs": [-16.28, -16.28, 34.25, 32.75], "frog_orange_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_orange_teen": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_orange_adult": [-36.1, -28.75, 72.25, 63.5], "frog_blue_legs": [-16.28, -16.28, 34.25, 32.75], "frog_blue_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_blue_tiny": [-19.95, -16.45, 40, 36.5], "frog_blue_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_blue_teen": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_blue_adult": [-36.1, -51, 72.25, 85.75], "frog_yellow_legs": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_legs_sleep": [-16.28, -16.28, 34.25, 32.75], "frog_yellow_tiny": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_sleep": [-19.95, -16.45, 40, 36.5], "frog_yellow_teen": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_sleep": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_grown": [-29.4, -23.15, 59, 52], "frog_yellow_grown_sleep": [-29.4, -23.15, 59, 52], "frog_yellow_adult": [-36.1, -40.5, 72.25, 75.25], "kayak": [44.33, 512.33, 271.33, 233.67], "kayak_crack_1": [104.33, 603.33, 34.33, 70.67], "kayak_crack_2": [226.67, 614.33, 34.33, 56.67], "kayak_crack_3": [161, 546.67, 35.67, 51.67], "bg_swamp": [0, 0, 360, 640], "swamp_leaf": [4, 3, 22, 14], "lilypad": [8.25, 5, 89.25, 43], "lilypad_stem": [8.5, 5, 76.25, 62.25], "btn_tutorial": [3, 3, 45, 47], "icon_coin": [4, 4, 22, 23], "tutorial_hand": [13, 2.5, 37, 48.75], "load_icon_happy": [3, 7.6, 44, 25.4], "load_icon_hmm": [3, 7.6, 44, 25.4], "load_icon_worried": [3, 7.6, 44, 25.4], "load_icon_panic": [3, 7.6, 44, 25.4], "item_rainbow": [1.13, 0.0, 31.73, 34], "item_bucket": [0.35, 0.0, 33.29, 34], "item_net": [0.0, 4.04, 34, 25.93], "mission_poster": [7, 4.4, 57.4, 68.2], "card_newfrog": [8, 4, 248, 312], "btn_continue_ad": [4, 4, 112, 112], "mission_pad": [2, 2, 52, 36], "piggy_bank": [6.5, 11, 67, 59.5], "tag_10pct": [2.75, 4, 45, 26], "frog_green_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_red_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_purple_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_orange_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_yellow_teen_eat": [-24.15, -19.4, 48.5, 43.5], "frog_blue_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_tiny_eat": [-19.95, -16.45, 40, 36.5], "frog_yellow_grown_eat": [-29.4, -23.15, 59, 52]};   // where each sprite sits, in game units, relative to the point the old code drew from
 const DECO=[["deco_lotus_1", 298.8, 177.1, 61.2, 55.1], ["deco_lotus_2", 0.0, 161.4, 78.4, 141.6], ["deco_lotus_3", 317.5, 283.5, 42.5, 62.0], ["deco_lotus_5", 0.0, 577.7, 67.3, 52.0], ["deco_lotus_6", 277.0, 459.1, 83.0, 153.8]];   // scene decorations around the edges (above the water, under the frogs)
 const PLUM='#520929',CREAM='#fff8ec',HUDBR='#896838';
 const IMG={};let assetsReady=false,assetsDone=0;const assetsTotal=Object.keys(ASSET_SRC).length;
@@ -671,7 +671,8 @@ function hat(sp,r){
   else{ctx.fillStyle='#ffd84a';ctx.beginPath();ctx.moveTo(-r*.55,-r*.95);for(let i=0;i<=4;i++){ctx.lineTo(-r*.55+i*r*.275,i%2?-r*1.15:-r*1.5)}ctx.lineTo(r*.55,-r*.95);ctx.closePath();ctx.fill();
     ctx.fillStyle='#e84a6a';dot(0,-r*1.08,r*.08);ctx.fillStyle='#4fa8e6';dot(-r*.3,-r*1.05,r*.06);dot(r*.3,-r*1.05,r*.06)}}
 const STN={2:'legs',3:'tiny',4:'teen',5:'grown',6:'adult'};
-function frogId(st,sp,sleep){if(st===0)return 'frog_egg';if(st===1)return sleep?'frog_tadpole_sleep':'frog_tadpole';return 'frog_'+sp+'_'+STN[st]+(sleep&&st<ADULT?'_sleep':'')}
+function frogId(st,sp,sleep){if(st===0)return 'frog_egg';if(st===1)return sleep?'frog_tadpole_sleep':'frog_tadpole';const b='frog_'+sp+'_'+STN[st];if(sleep==='eat')return ASSET_SRC[b+'_eat']?b+'_eat':b;return b+(sleep&&st<ADULT?'_sleep':'')}
+const hasEat=(st,sp)=>st>=2&&!!ASSET_SRC['frog_'+sp+'_'+STN[st]+'_eat'];
 function drawFrogRaw(st,sp,r,sleep){
   if(drawRect(frogId(st,sp,sleep),0,0,r/STAGES[st].r))return;
   const s=sp?SPECIES[sp]:null,c1=s?s.c:'#4a4366',c2=s?s.d:'#3b3550';
@@ -689,7 +690,7 @@ function drawFrogRaw(st,sp,r,sleep){
 // a short tail peeking out at the lower right
 function shortTail(r,c){ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(r*.74,r*.7,r*.36,r*.2,.62,0,Math.PI*2);ctx.fill()}   // short, rounded
 function drawFrog(st,sp,x,y,r,rot,sc,alpha,sleep){
-  sleep=!!sleep&&st>0;const key=st+'|'+sp+'|'+Math.round(r*2)+'|'+sleep;let img=spriteCache.get(key);
+  sleep=sleep==='eat'&&st>1?'eat':!!sleep&&st>0;const key=st+'|'+sp+'|'+Math.round(r*2)+'|'+sleep;let img=spriteCache.get(key);
   if(!img){const b=SPRITE_BOX[st],x0=b[0]*r,y0=b[1]*r,w=(b[2]-b[0])*r,h=(b[3]-b[1])*r;
     img=document.createElement('canvas');img.width=Math.ceil(w*PX);img.height=Math.ceil(h*PX);
     const c=img.getContext('2d'),keep=ctx;c.scale(PX,PX);c.translate(-x0,-y0);ctx=c;drawFrogRaw(st,sp,r,sleep);ctx=keep;img.x0=x0;img.y0=y0;img.w0=w;img.h0=h;spriteCache.set(key,img)}
@@ -708,7 +709,7 @@ function drawCrack(i){const c=CRACKS[i],fx=crackFx>0&&i===cracks-1?1+crackFx*.6:
   ctx.strokeStyle='#5a2a14';ctx.lineWidth=2.6*fx;ctx.beginPath();c.forEach(([x,y],k)=>k?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();
   const[mx,my]=c[1];ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx+(i===1?-9:9),my-5);ctx.stroke()}
 function drawKayak(){
-  const sink=clamp(load,0,1.2),bob=Math.sin(t*2.2)*1.5+sink*8+(load>=1?beatFx*4:0)+(state==='over'||state==='cont'||state==='ad'?Math.min(60,(t-endT)*50):state==='restart'?60*Math.pow(1-clamp(restartT/RESTART_TIME,0,1),2):0);
+  const sink=clamp(load,0,1.2),bob=Math.sin(t*2.2)*1.5+sink*8+(load>=1?beatFx*4:0)+(state==='over'||state==='cont'||state==='ad'?Math.min(60,(t-endT)*50):state==='restart'?60*Math.pow(1-clamp(restartT/1.1,0,1),2):0);
   ctx.save();ctx.translate(180,KB+bob);ctx.scale(KS,KS);ctx.translate(-180,-KB+KY);
   ctx.fillStyle='rgba(18,70,60,.3)';ell(180,600,140,120);
   const kim=img('kayak');
@@ -890,12 +891,16 @@ function drawPlay(){
     const tgt=f===aimed,open=tgt?1:(f.gulp>0?f.gulp/.35:0);
     if(f.thrown||f.squash>0){const sp=Math.hypot(f.vx,f.vy),a=f.thrown?Math.atan2(f.vy,f.vx):0,k=f.thrown?clamp(sp/THROW_SPEED,0,1)*.28:-(f.squash/.18)*.22;
       ctx.save();ctx.translate(f.x,f.y);ctx.rotate(a);ctx.scale(1+k,1-k*.8);ctx.rotate(-a);drawFrog(f.st,f.sp,0,0,f.r,f.rot,sc,undefined,false);ctx.restore()}
-    else drawFrog(f.st,f.sp,f.x,f.y,f.r,f.rot,sc,undefined,!f.awake&&!tgt);
+    else drawFrog(f.st,f.sp,f.x,f.y,f.r,f.rot,sc,undefined,open>0&&hasEat(f.st,f.sp)?'eat':!f.awake&&!tgt);
     if(open>0){ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.rot||0);ctx.scale(sc,sc);const r=f.r,m=tgt?.75+.25*Math.sin(t*10):open;
-      ctx.fillStyle=f.sp?SPECIES[f.sp].c:'#888';ctx.fillRect(-r*.3,r*.1,r*.6,r*.12);
+      if(hasEat(f.st,f.sp)&&img(frogId(f.st,f.sp,'eat'))){const my=-r*.02;   // painted frog with no mouth: open one where its mouth sits
+        ctx.fillStyle='#4a1a14';ctx.beginPath();ctx.ellipse(0,my,r*.32,r*.24*m,0,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#ff8fa0';ctx.beginPath();ctx.ellipse(0,my+r*.12*m,r*.17,r*.09*m,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+      else{ctx.fillStyle=f.sp?SPECIES[f.sp].c:'#888';ctx.fillRect(-r*.3,r*.1,r*.6,r*.12);
       ctx.fillStyle='#3a1410';ctx.beginPath();ctx.ellipse(0,r*.24,r*.44,r*.34*m,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#ff8fa0';ctx.beginPath();ctx.ellipse(0,r*.24+r*.18*m,r*.24,r*.12*m,0,0,Math.PI*2);ctx.fill();ctx.restore()}
+      ctx.fillStyle='#ff8fa0';ctx.beginPath();ctx.ellipse(0,r*.24+r*.18*m,r*.24,r*.12*m,0,0,Math.PI*2);ctx.fill();ctx.restore()}}
     if(f.fed>0){ctx.fillStyle='#e1eefc';for(let i=0;i<EAT_TO_GROW;i++){ctx.globalAlpha=i<f.fed?1:.3;dot(f.x-4+i*8,f.y-f.r-6,2.6)}ctx.globalAlpha=1}}
+  for(const s of swimmers)drawFrog(s.st,s.sp,s.x,s.y+(s.t>0?Math.sin(t*16+s.y)*1.5:0),s.r,s.t>0?s.dir*.15:0,1);
   drawCanopy();
   for(const g of rings){const k=g.t/.35;ctx.strokeStyle='rgba('+g.c+','+((g.a||.8)*(1-k))+')';ctx.lineWidth=3*(1-k)+1;ctx.beginPath();ctx.arc(g.x,g.y,g.r*(.6+.9*k),0,7);ctx.stroke()}
   for(const c of clouds){const k=c.t/c.dur;ctx.fillStyle='rgba('+c.c+','+(.4*(1-k))+')';dot(c.x,c.y,c.r*(.5+.6*k));
@@ -922,7 +927,7 @@ function drawPlay(){
   for(const d of deckReds){const sc=1+Math.sin(d.t*6)*.04;drawFrog(ADULT,'red',d.x,d.y+bob,STAGES[ADULT].r*.8,Math.sin(d.t*3)*.1,sc);
     ctx.strokeStyle='rgba(255,154,133,'+(.5+.4*Math.sin(t*10))+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(d.x,d.y+bob,STAGES[ADULT].r*.8+6,0,7);ctx.stroke()}
   if(state!=='over'&&state!=='cont'&&state!=='ad')drawMission();
-  if(state!=='over'&&state!=='cont'&&state!=='ad')for(let i=0;i<boatItems.length;i++){const[x,y]=SEATS[i];const sp0=seatPop&&seatPop.i===i?seatPop.t/.5:-1;if(i===pulseItem||sp0>=0){const z=sp0>=0?(sp0<.6?1.35*Math.sin(sp0/.6*Math.PI/2):1.35-.35*(sp0-.6)/.4):1+.16*Math.abs(Math.sin(t*6));ctx.save();ctx.translate(x-hullX,y);ctx.scale(z,z);drawSticker(ITEMS[boatItems[i]].icon,0,0,26);ctx.restore()}else drawSticker(ITEMS[boatItems[i]].icon,x-hullX,y,26)}
+  if(state!=='over'&&state!=='cont'&&state!=='ad')for(let i=0;i<boatItems.length;i++){const[x,y]=SEATS[i];const sp0=seatPop&&seatPop.i===i?seatPop.t/.5:-1;if(i===pulseItem||sp0>=0){const z=sp0>=0?(sp0<.6?1.35*Math.sin(sp0/.6*Math.PI/2):1.35-.35*(sp0-.6)/.4):1+.16*Math.abs(Math.sin(t*6));ctx.save();ctx.translate(x-hullX,y);ctx.scale(z,z);drawSticker(ITEMS[boatItems[i]].icon,0,0,22);ctx.restore()}else drawSticker(ITEMS[boatItems[i]].icon,x-hullX,y,22)}
   if(nets>0){ctx.strokeStyle='rgba(240,240,230,.55)';ctx.lineWidth=1.5;const cx=180,cy=BOW[1]+30+bob;
     for(let i=-4;i<=4;i++){ctx.beginPath();ctx.moveTo(cx+i*12-30,cy-30);ctx.lineTo(cx+i*12+30,cy+30);ctx.moveTo(cx+i*12+30,cy-30);ctx.lineTo(cx+i*12-30,cy+30);ctx.stroke()}}
   const nx=raft[0];
@@ -976,11 +981,28 @@ function drawLoading(){drawCover();const k=assetsDone/assetsTotal,x=70,y=588+OYV
   ctx.fillStyle=PLUM;rrect(x-3,y-3,w+6,h+6,99);ctx.fill();ctx.fillStyle='#fdf0cf';rrect(x,y,w,h,99);ctx.fill();
   if(k>0){ctx.fillStyle='#ffd34a';rrect(x+3,y+3,Math.max(h-6,(w-6)*k),h-6,99);ctx.fill()}}
 // playing again from the sink screen: the frogs that sank the kayak jump off, the kayak bobs back up, the next frog stays on the bow
-function playAgain(){if(USE_HEARTS&&hearts.n<=0)return;const keep=raft[0]||{st:0,sp:null,pop:0};
-  jumpers=raft.slice(1).map((it,i)=>{const d=DECK[i%DECK.length];return{st:it.st,sp:it.sp,x:d[0],y:d[1]+60,vx:(d[0]<180?-1:1)*rnd(120,260),vy:rnd(-520,-380),t:-i*.04}});
-  for(const d of deckReds)jumpers.push({st:ADULT,sp:'red',x:d.x,y:d.y+60,vx:rnd(-200,200),vy:-500,t:0});
-  newGame(keep);state='restart';restartT=0;tone(520,.12,'triangle',.1);setTimeout(()=>tone(660,.14,'triangle',.1),120)}
-const RESTART_TIME=1.4;
+// playing again is a fresh start: everyone jumps off the kayak, the swamp swims away to the sides,
+// the kayak drains and bobs up, it paddles on to a new spot, new rows flow out from under the lily pads and three frogs hop aboard
+let swimmers=[],oldM=0;
+function playAgain(){if(USE_HEARTS&&hearts.n<=0)return;
+  jumpers=raft.map((it,i)=>{const[sx,sy]=slotPos(i),x=it.px??sx,y=it.py??sy;return{st:it.st,sp:it.sp,x,y,vx:(x<W/2?-1:1)*rnd(80,190),vy:rnd(-440,-330),t:-i*.05,land:y+rnd(25,60)}});
+  for(const dr of deckReds)jumpers.push({st:ADULT,sp:'red',x:dr.x,y:dr.y,vx:(dr.x<W/2?-1:1)*rnd(120,220),vy:-460,t:0,land:dr.y+50});
+  swimmers=frogs.filter(f=>!f.dead).map(f=>({st:f.st,sp:f.sp,x:f.x,y:f.y,r:f.r,dir:f.x<W/2?-1:1,t:-clamp((BOAT_Y-f.y)/(BOAT_Y-TOP),0,1)*.45,v:0}));
+  oldM=endInfo?endInfo.m:Math.floor(meters);const v0=vl,tf=tutDoneFlag;tutDoneFlag=true;newGame(null);tutDoneFlag=tf;vl=v0;
+  for(const f of frogs){f.ty0=f.y;f.y=TOP-40}   // the new rows wait under the lily band
+  raft=[];state='restart';restartT=0;tone(520,.12,'triangle',.1);setTimeout(()=>tone(660,.14,'triangle',.1),120)}
+function restartUpdate(dt){restartT+=dt;
+  for(const j of jumpers){j.t+=dt;if(j.t<0)continue;j.x+=j.vx*dt;j.y+=j.vy*dt;j.vy+=900*dt;if(j.vy>0&&j.y>=j.land&&!j.gone){j.gone=true;splash(j.x,j.y);splash(j.x,j.y)}}
+  jumpers=jumpers.filter(j=>!j.gone);
+  for(const s of swimmers){s.t+=dt;if(s.t>0){s.v=Math.min(440,s.v+1000*dt);s.x+=s.dir*s.v*dt}}swimmers=swimmers.filter(s=>s.x>-60&&s.x<W+60);
+  vl+=(0-vl)*Math.min(1,dt*3);
+  const b=clamp((restartT-.8)/.9,0,1);scroll+=560*dt*Math.sin(b*Math.PI);meters=oldM*(1-b*b*(3-2*b));   // paddling on: the water slides past, the distance counts back to 0
+  const e=clamp((restartT-1.5)/.8,0,1),ee=1-Math.pow(1-e,3);for(const f of frogs)if(f.ty0!==undefined)f.y=(TOP-40)+(f.ty0-(TOP-40))*ee;
+  if(restartT>=RESTART_TIME)finishRestart()}
+function finishRestart(){state='play';jumpers=[];swimmers=[];meters=0;vl=0;
+  for(const f of frogs)if(f.ty0!==undefined){f.y=f.ty0;delete f.ty0}
+  for(let i=0;i<BOW_FROGS;i++){const[st,sp]=nextAmmo();hop(st,sp,ENTRY_WATER[0]+rnd(-4,8),ENTRY_WATER[1]+rnd(-6,6),0,.28+i*.14)}splash(ENTRY_WATER[0],ENTRY_WATER[1])}
+const RESTART_TIME=2.4;
 // sink screen layout
 const PIGGY_CUT=.1;
 const OVER_PIG=[108,292],BTN={x:W/2,y:552,w:200,h:52};
@@ -989,10 +1011,11 @@ const coinsShown=()=>{const k=clamp((t-endT-1.5)/1.2,0,1);return Math.round(pigg
 function nine(id,x,y,w,h,sp,du){const im=img(id);if(!im)return false;const iw=im.width,ih=im.height,sx=[0,sp,iw-sp,iw],sy=[0,sp,ih-sp,ih],dx=[x,x+du,x+w-du,x+w],dy=[y,y+du,y+h-du,y+h];
   for(let a=0;a<3;a++)for(let b=0;b<3;b++){const sw=sx[a+1]-sx[a],sh=sy[b+1]-sy[b],dw=dx[a+1]-dx[a],dh=dy[b+1]-dy[b];if(sw>0&&sh>0&&dw>0&&dh>0)ctx.drawImage(im,sx[a],sy[b],sw,sh,dx[a],dy[b],dw,dh)}return true}
 // the shop slot stretched taller: the awning and the bottom edge keep their size, the sides stretch
-function shopSlot(x,y,w,h){const im=img('shop_slot');ctx.fillStyle=CREAM;rrect(x+5,y+18,w-10,h-23,12);ctx.fill();
-  if(!im){ctx.strokeStyle=PLUM;ctx.lineWidth=2.5;rrect(x+3,y+3,w-6,h-6,14);ctx.stroke();return}
-  const r=RECT.shop_slot,k=w/r[2],top=84,bot=54,dt=top*r[2]/im.width*k,db=bot*r[2]/im.width*k;
-  ctx.drawImage(im,0,0,im.width,top,x,y,w,dt);ctx.drawImage(im,0,top,im.width,im.height-top-bot,x,y+dt,w,h-dt-db);ctx.drawImage(im,0,im.height-bot,im.width,bot,x,y+h-db,w,db)}
+// a shop card: the cream new-frog card, 9-sliced to size, with the striped awning across the top
+function shopSlot(x,y,w,h){const cd=img('shop_card'),aw=img('shop_awning');
+  if(!cd||!aw){ctx.fillStyle=CREAM;rrect(x,y,w,h,14);ctx.fill();return}
+  nine('shop_card',x+2,y+10,w-4,h-10,46,15);
+  const aw2=w+10,ah=aw2*aw.height/aw.width;ctx.drawImage(aw,x-5,y,aw2,ah)}
 function drawOver(){const k=clamp((t-endT-.9)/.4,0,1);if(k<=0)return;const e=endInfo,T=t-endT;
   ctx.globalAlpha=k;ctx.fillStyle='rgba(16,40,36,.9)';ctx.fillRect(0,-OYV,W,H+OYV*2);
   txt('Sunk!',W/2,74,48,'#ff8a6a','center');
@@ -1020,7 +1043,7 @@ function drawOver(){const k=clamp((t-endT-.9)/.4,0,1);if(k<=0)return;const e=end
   // shop: three taller slots, item under the awning, name and price below
   for(const c of shop){const it=ITEMS[c.k],shx=c.shakeT>0?Math.sin(t*60)*6*c.shakeT/.6:0,sw=96,sh2=132,x=c.x-sw/2+shx,y=352;
     ctx.save();ctx.globalAlpha=k*(c.sold?.4:1);shopSlot(x,y,sw,sh2);
-    if(!drawRect('item_'+c.k,c.x+shx-17*1.3,y+34-4,1.3)){ctx.font='30px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.textAlign='center';ctx.fillText(it.icon,c.x+shx,y+66)}
+    if(!drawRect('item_'+c.k,c.x+shx-17*1.25,y+31,1.25)){ctx.font='30px system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif';ctx.textAlign='center';ctx.fillText(it.icon,c.x+shx,y+66)}
     label(it.name,c.x+shx,y+97,15,PLUM,'center');
     if(c.sold)label('bought',c.x+shx,y+118,14,'#3b6d11','center');else{ctx.font='600 15px '+FONT;const w=ctx.measureText(String(c.price)).width;coinIcon(c.x+shx-w/2-4,y+113,7);label(String(c.price),c.x+shx-w/2+7,y+118,15,'#854f0b')}
     ctx.restore()}
@@ -1060,7 +1083,7 @@ function draw(){
   if(state==='ad')drawAd();
   if(state==='over')drawOver();
   if(state==='card')drawCard();
-  if(state==='restart'){drawGauge();drawHud(0,false)}}
+  if(state==='restart'){drawGauge();drawHud(0,true)}}
 
 // ---------- input ----------
 function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*(H+OYV*2)-OYV}}
@@ -1070,7 +1093,7 @@ cv.addEventListener('pointerdown',e=>{const p=pt(e);audioOn();idleT=0;
   if(state==='cont'){if(t-endT<.8)return;if(Math.hypot(p.x-CONT_BTN.x,p.y-CONT_BTN.y)<CONT_BTN.r+12){state='ad';adT=0}else if(p.y>NO_BTN.y)finishOver();return}
   if(state==='ad')return;
   if(state==='over'){overTap(p);return}
-  if(state==='restart')return;
+  if(state==='restart'){if(restartT>.3)finishRestart();return}   // tap to skip
   if(state==='card'){if(cardT>.6){state='play';card=null}return}
   cv.setPointerCapture(e.pointerId);
   const ii=itemAt(p);if(ii>=0){const k=boatItems.splice(ii,1)[0];saveItems();useItem(k);return}
@@ -1083,8 +1106,7 @@ cv.addEventListener('pointercancel',()=>drag=null);
 
 let last=performance.now();
 function loop(now){const dt=Math.min(1/30,(now-last)/1000);last=now;
-  if(state==='restart'){restartT+=dt;for(const j of jumpers){j.t+=dt;if(j.t<0)continue;j.x+=j.vx*dt;j.y+=j.vy*dt;j.vy+=900*dt}
-    jumpers=jumpers.filter(j=>j.y<H+60);if(restartT>=RESTART_TIME){state='play';jumpers=[]}}
+  if(state==='restart')restartUpdate(dt);
   if(state==='cont'){contT+=dt;if(contT>=CONT_WAIT)finishOver()}
   if(state==='ad'){adT+=dt;if(adT>=AD_TIME)resumeAfterAd()}
   for(const c of shop)if(c.shakeT>0)c.shakeT-=dt;poorT=Math.max(0,poorT-dt);
