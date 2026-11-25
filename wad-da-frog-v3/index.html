@@ -452,8 +452,7 @@ function update(dt){
   const rowMul=wave==='calm'||wave==='event'?0:lv,boardMul=feast?EGG_BOARD:wave==='calm'?CALM_BOARD:lv;
   if(rainbowT>0){rainbowT-=dt;for(const f of frogs)f.awake=true}
   // new kinds of frog by distance
-  if(!tut)for(const k of SP_KEYS)if(!unlocked.includes(k)&&meters>=UNLOCK[k]){unlocked.push(k);if(seen.includes(k))continue;   // the card only shows the first time you ever meet a kind
-    seen.push(k);try{localStorage.setItem('wadSeen4',JSON.stringify(seen))}catch(e){}card={sp:k};cardT=0;state='card';drag=null;fanfare();return}
+  if(!tut)for(const k of SP_KEYS)if(!unlocked.includes(k)&&meters>=UNLOCK[k]){unlocked.push(k);if(!seen.includes(k)){seen.push(k);try{localStorage.setItem('wadSeen4',JSON.stringify(seen))}catch(e){}}}   // new kinds just start turning up: no card, no pause
   if(banner){banner.t+=dt;if(banner.t>banner.dur)banner=null}
   if(!tut)rowT-=dt*rowMul;if(rowT<=0){rowT=Math.max(ROW_MIN,ROW_START-(ROW_START-ROW_MIN)*(t-t0w)/ROW_RAMP);addRow(true);tone(150,.25,'sine',.06,.7)}
   // frogs climb aboard, faster the longer you play
