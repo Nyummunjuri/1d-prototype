@@ -167,7 +167,7 @@ footer{padding:6px 10px calc(12px + env(safe-area-inset-bottom));display:flex;fl
 #repBtn:not(.ok){opacity:.7;filter:grayscale(.6)}
 #balloon .its{display:flex;flex-wrap:nowrap;gap:6px}#balloon .ri{display:flex;align-items:center;gap:2px;white-space:nowrap}#balloon{max-width:calc(100vw - 112px);gap:6px;padding:8px 8px}#balloon .claim{padding:0 10px}#balloon .rw{padding-left:6px}.claim:disabled{text-shadow:none}
 #payP{z-index:62}#pickTitle{font-weight:500;font-size:11px;color:#a07a4a;text-align:center;margin:2px 0 0;letter-spacing:.3px}
-.slot[data-k]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}.slot[data-k] canvas{width:36px!important;height:36px!important}.slot .slbl{font-size:10px;font-weight:500;color:#a07a4a;line-height:1;text-align:center}.slot[data-k] b{bottom:0}
+.slot[data-k]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}.slot[data-k] canvas{width:36px!important;height:36px!important}.slot .slbl{font-size:10px;font-weight:500;color:#a07a4a;line-height:1;text-align:center}
 .claim.big{height:52px;font-size:21px;padding:0 28px;display:flex;align-items:center;gap:6px}.claim.big svg,.claim.big img{width:22px;height:22px}.claim.no{background:#cfc6b2;box-shadow:0 4px 0 #b3aa97;text-shadow:none}
 #tray{display:grid;gap:8px;justify-content:center;padding-top:14px}
 .cw{position:relative;min-width:0}.cw .card{width:100%}.cw .swap{position:absolute;top:-15px;left:50%;margin-left:-17px;z-index:4;width:34px;height:34px;border-radius:50%;border:0;background:#fff;box-shadow:0 2px 0 #d8cbab,0 2px 6px rgba(0,0,0,.18);display:grid;place-items:center;padding:0;animation:pop .3s cubic-bezier(.3,1.6,.5,1)}
@@ -196,7 +196,7 @@ footer{position:relative}.fbar{display:flex;gap:8px;align-items:center}
 #slots{display:grid;grid-template-columns:62px;grid-auto-rows:66px;gap:6px;max-height:calc(5*66px + 4*6px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:none}#slots::-webkit-scrollbar{display:none}
 .slot{position:relative;width:62px;height:66px;border-radius:12px;background:rgba(207,227,214,.85);display:grid;place-items:center;touch-action:pan-y}.slot canvas{width:50px;height:50px}
 .slot.seed{background:none}.slot.seed .pkt{position:absolute;inset:0}.slot.seed .win{position:absolute;left:6px;right:6px;top:11px;height:38px;background:#fff8ea;border-radius:8px;display:grid;place-items:center}.slot.seed canvas.mini{width:34px;height:34px}.slot.seed b{right:0;left:0;text-align:center;bottom:1px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45)}
-.slot b{position:absolute;right:3px;bottom:1px;font-size:14px;color:#22361a}.slot.empty canvas{opacity:.35}.slot.lock svg{width:22px;height:22px;opacity:.6}
+.slot b{position:absolute;right:3px;bottom:1px;font-size:14px;color:#22361a}.slot[data-k]:not(.empty){background:#fff8ea;box-shadow:0 3px 0 #e0cfa8}.slot.empty canvas{opacity:.4;filter:grayscale(1)}.slot.empty .slbl{opacity:.6}.slot[data-k] b{right:2px;top:2px;bottom:auto;background:#fff;border-radius:10px;padding:1px 6px;font-size:13px;color:#22361a;box-shadow:0 2px 0 rgba(0,0,0,.15)}.slot .plus{position:absolute;right:2px;top:2px;width:20px;height:20px;line-height:20px!important;border-radius:50%;background:linear-gradient(#a8ec72,#6fcf44);box-shadow:0 2px 0 #3f9a2a;color:#fff;font:700 18px/22px Fredoka,sans-serif;font-style:normal;text-align:center}.slot.lock svg{width:22px;height:22px;opacity:.6}
 #water{flex:1;width:auto;min-height:54px;font-size:19px;background:var(--water);color:#fff;box-shadow:0 4px 0 #2a7fae;display:flex;align-items:center;justify-content:center;gap:8px}
 #water svg,#water img.artimg{width:22px;height:22px}
 #water .cost{display:inline-flex;align-items:center;gap:2px;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 9px 2px 5px;font-size:16px}
@@ -1624,7 +1624,7 @@ function drawTool(c,kind,css){const d=devicePixelRatio||1;c.width=c.height=Math.
 function renderBag(){if(!$('bagP').hidden)renderSlots();const n=TOOLS.reduce((a,k)=>a+(S.items[k]||0),0)+Object.values(S.seeds).reduce((a,v)=>a+v,0);$('bagN').textContent=n;$('bagN').hidden=!n}
 function seedSlot(k){const d=document.createElement('div');d.className='slot seed';d.dataset.seed=k;d.innerHTML=`<div class="pkt" style="--pk:${packCol(k)}"></div><div class="win"><canvas class="mini"></canvas></div><b>×${S.seeds[k]}</b>`;drawPack(d.querySelector('canvas'),k,34);return d}
 function renderSlots(){const sl=$('slots'),top=sl.scrollTop;sl.innerHTML='';
-  TOOLS.forEach(k=>{const d=document.createElement('div');d.className='slot'+(S.items[k]?'':' empty');d.dataset.k=k;const c=document.createElement('canvas');drawTool(c,k,50);d.appendChild(c);d.insertAdjacentHTML('beforeend',`<span class="slbl">${k==='hoe'?'Hint':'Replot'}</span><b>×${S.items[k]||0}</b>`);sl.appendChild(d)});
+  TOOLS.forEach(k=>{const d=document.createElement('div');d.className='slot'+(S.items[k]?'':' empty');d.dataset.k=k;const c=document.createElement('canvas');drawTool(c,k,50);d.appendChild(c);d.insertAdjacentHTML('beforeend',`<span class="slbl">${k==='hoe'?'Hint':'Replot'}</span>${S.items[k]?`<b>×${S.items[k]}</b>`:'<i class="plus">+</i>'}`);sl.appendChild(d)});
   Object.keys(S.seeds).filter(k=>S.seeds[k]>0).sort().forEach(k=>sl.appendChild(seedSlot(k)));
   for(let k=sl.children.length;k<5;k++)sl.insertAdjacentHTML('beforeend',`<div class="slot lock">${artIcon('icon_lock')}</div>`);sl.scrollTop=top}
 function openBag(){if(state==='flow'||state==='harvest'||won)return;renderSlots();$('bagP').hidden=false}
@@ -1637,6 +1637,8 @@ function toolCells(kind,c){if(c<0||G.soil[c]==='.'||isPond(c))return null;if(kin
 const shake=el=>el.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:260});
 $('slots').addEventListener('click',e=>{const s=e.target.closest('.slot');if(!s)return;
   if(s.dataset.seed){if(!useSeedFromBag(s.dataset.seed)){shake(s);sfx(220,.08,.15,'sine',.8)}return}
+  // used up: the + takes you to the shop row that sells it
+  if(s.dataset.k&&!(S.items[s.dataset.k]>0)){openShop('store');const b=document.querySelector(`#shopP [data-gem="${s.dataset.k}"]`);if(b){const row=b.closest('.srow');row.scrollIntoView({block:'center'});row.animate([{background:'#fff1b8'},{background:'#fff1b8',offset:.6},{background:''}],{duration:1200})}return}
   const k=s.dataset.k;if(!k||!(S.items[k]>0)||!useTool(k,s)){shake(s);sfx(220,.08,.15,'sine',.8)}});
 // hoe = hint: the tile next to the water's reach that is still wrong turns the right way
 function hintTile(){const live=wetMap(),c=[];for(let i=0;i<G.n;i++)if(unsolved(i))c.push(i);if(!c.length)return -1;
